@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+ 
 
 public class main : MonoBehaviour
 {
@@ -18,6 +18,8 @@ public class main : MonoBehaviour
     int blkY = D.INIT_POS_Y;
 
     double x0, y0, x1, y1;
+    // Block blk = new Block;
+    D.ST[,] blkShp = new D.ST[D.BLOCK_CELL_LEN, D.BLOCK_CELL_LEN];
 
 
     
@@ -51,12 +53,149 @@ void Start()
         }
     }
 
-    // debug
-    mainFldAry[blkY, blkX] = D.ST.TTT;
-    mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
+    init();
+    
+}
+
+void init() {
+    changeBlkShp();
+    putBlk();
+}
+
+void changeBlkShp() {
+    int index = Random.Range(1, 8);
+
+    switch (index)
+    {
+        case 1: blkShp = D.III; break;
+        case 2: blkShp = D.JJJ; break;
+        case 3: blkShp = D.LLL; break;
+        case 4: blkShp = D.OOO; break;    
+        case 5: blkShp = D.SSS; break;
+        case 6: blkShp = D.TTT; break;
+        case 7: blkShp = D.ZZZ; break;
+
+    }
+
+}
 
 
+void rstBlk() {
+    blkX = D.INIT_POS_X;
+    blkY = D.INIT_POS_Y;
 
+    changeBlkShp();
+
+    if (ablePutBlk()) {
+        putBlk();
+    }
+
+}
+
+void delBlk() {
+    for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
+        for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
+            if (mainFldAry[y, x] != D.ST.FIX) {
+                if (mainFldAry[y, x] != D.ST.NON) {
+                    mainFldAry[y, x] = D.ST.NON;
+                    mainFldGui[y, x].color(mainFldAry[y, x]);
+                }
+            }
+        }
+    }
+}
+
+void putBlk() {
+    for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
+        for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
+            //if (mainFldAry[y, x] != D.ST.FIX) {
+            if (blkShp[y - blkY, x - blkX] != D.ST.NON) {
+                mainFldAry[y, x] = blkShp[y - blkY, x - blkX];
+                mainFldGui[y, x].color(mainFldAry[y, x]);
+            }
+        }
+    }
+}
+
+bool ablePutBlk() {
+    for (int y = 0; y < D.BLOCK_CELL_LEN; y++) {
+        for (int x = 0; x < D.BLOCK_CELL_LEN; x++) {
+            if (blkShp[y, x] != D.ST.NON) {
+                if (mainFldAry[blkY + y, blkX + x] == D.ST.FIX) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void fixBlk() {
+    for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
+        for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
+            if (blkShp[y- blkY, x - blkX] != D.ST.NON) {
+                mainFldGui[y, x].colorF(mainFldAry[y, x]);
+
+                mainFldAry[y, x] = D.ST.FIX;
+            }
+        }
+    }
+}
+
+bool mvBlk(int dx, int dy) {
+    delBlk();
+
+    bool mv = true;
+    blkX += dx;
+    blkY += dy;
+
+    if (!ablePutBlk()) {
+        blkX -= dx;
+        blkY -= dy;
+        mv = false;
+    }
+    putBlk();
+    return mv;
+
+}
+
+bool checkLine(int y) {
+    for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+        if (mainFldAry[y, x] != D.ST.FIX) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void delLine(int y) {
+    while (true) {
+        for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+            mainFldAry[y, x] = mainFldAry[y - 1, x];        
+            mainFldGui[y, x].color(mainFldAry[y, x]);
+        }
+        
+        y--;
+
+        if (y == D.BLOCK_CELL_LEN - 1) {
+            for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+                mainFldAry[y, x] = D.ST.NON;
+                mainFldGui[y, x].color(mainFldAry[y, x]);
+            }
+            return;
+        }
+    }
+}
+
+void fixDelRstBlk() {
+    fixBlk();
+    for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
+        if (checkLine(y)) {
+            delLine(y);
+            y = y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
+        }
+    }
+    rstBlk();
 }
 
 // Update is called once per frame
@@ -74,42 +213,31 @@ void Update()
     }
     
     if (x1 - x0 > D.SWIPE_THR) {
-        mainFldAry[blkY, blkX] = D.ST.NON;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
         x0 = x1;
         y0 = y1;
-        blkX += 1;
-        mainFldAry[blkY, blkX] = D.ST.TTT;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
+        mvBlk(1, 0);
     }
     else if (x0 - x1 > D.SWIPE_THR) {
-        mainFldAry[blkY, blkX] = D.ST.NON;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
         x0 = x1;
         y0 = y1;
-        blkX += -1;
-        mainFldAry[blkY, blkX] = D.ST.TTT;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
+        mvBlk(-1, 0);
     }
     else if (y1 - y0 > D.SWIPE_THR) {
-        mainFldAry[blkY, blkX] = D.ST.NON;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
         x0 = x1;
         y0 = y1;
-        blkY += -1;
-        mainFldAry[blkY, blkX] = D.ST.TTT;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
+        mvBlk(0, -1);
     }
     else if (y0 - y1 > D.SWIPE_THR) {
-        mainFldAry[blkY, blkX] = D.ST.NON;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
         x0 = x1;
         y0 = y1;
-        blkY += 1;
-        mainFldAry[blkY, blkX] = D.ST.TTT;
-        mainFldGui[blkY, blkX].color(mainFldAry[blkY, blkX]);
-    }
+        if (!mvBlk(0, 1)) {
+            fixDelRstBlk();
+        }
+   }
 
 }
+
+
+
 
 }
