@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
- 
+
 
 public class main : MonoBehaviour
 {
@@ -21,6 +21,11 @@ public class main : MonoBehaviour
     // Block blk = new Block;
     D.ST[,] blkShp = new D.ST[D.BLOCK_CELL_LEN, D.BLOCK_CELL_LEN];
 
+    float freeFallTimer = 0f;
+    
+    bool touch;
+
+    Block blk = new Block();
 
     
 void Start()
@@ -59,28 +64,22 @@ void Start()
 
 void init() {
     changeBlkShp();
+    blkShp = blk.shpA;
     putBlk();
 }
 
 void changeBlkShp() {
-    int index = Random.Range(1, 8);
 
-    switch (index)
-    {
-        case 1: blkShp = D.III; break;
-        case 2: blkShp = D.JJJ; break;
-        case 3: blkShp = D.LLL; break;
-        case 4: blkShp = D.OOO; break;    
-        case 5: blkShp = D.SSS; break;
-        case 6: blkShp = D.TTT; break;
-        case 7: blkShp = D.ZZZ; break;
+    blk.changeShp();
+    blkShp = blk.shpA;
 
-    }
 
 }
 
 
 void rstBlk() {
+
+
     blkX = D.INIT_POS_X;
     blkY = D.INIT_POS_Y;
 
@@ -169,18 +168,27 @@ bool checkLine(int y) {
 }
 
 void delLine(int y) {
+    
+
     while (true) {
         for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
-            mainFldAry[y, x] = mainFldAry[y - 1, x];        
-            mainFldGui[y, x].color(mainFldAry[y, x]);
+            mainFldAry[y, x] = mainFldAry[y - 1, x];
+            mainFldGui[y, x].colorF(mainFldGui[y - 1, x].getColorId());
+            //.colorF(mainFldAry[y, x]);
+            // mainFldAry[y, x] = D.ST.SSS;        
+            // mainFldGui[y, x].color(mainFldAry[y, x]);
+            // Debug.Log(mainFldAry);
+
         }
         
         y--;
 
         if (y == D.BLOCK_CELL_LEN - 1) {
             for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
-                mainFldAry[y, x] = D.ST.NON;
-                mainFldGui[y, x].color(mainFldAry[y, x]);
+            mainFldAry[y, x] = D.ST.NON;
+            mainFldGui[y, x].color(mainFldAry[y, x]);
+            // mai nFldAry[y, x] = mainFldAry[y, x];        
+            // mainFldGui[y, x].color(mainFldAry[y, x]);
             }
             return;
         }
@@ -192,24 +200,73 @@ void fixDelRstBlk() {
     for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
         if (checkLine(y)) {
             delLine(y);
-            y = y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
+            y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
         }
     }
+
+
+
     rstBlk();
 }
+
+void rotBlk() {
+    delBlk();
+    blk.rotShp();
+    blkShp = blk.shp;
+    if (ablePutBlk()) {
+        putBlk();
+    }
+}
+
 
 // Update is called once per frame
 void Update()
 {
+    freeFallTimer += Time.deltaTime;
+    if (freeFallTimer > D.FREE_FALL_TIME){
+        if (!mvBlk(0, 1)) {
+            fixDelRstBlk();
+        }
+        freeFallTimer = 0f;
+    }
+
 
     if (Input.GetMouseButtonDown(0)) {
         x0 = Input.mousePosition.x;
         y0 = Input.mousePosition.y;
+        x1 = x0;
+        y1 = y0;
+        touch = true;
+    }
+
+    if (Input.GetMouseButtonUp(0)) {
+
+        if (touch) {
+            rotBlk();
+        }
+
+
+        if (y1 - y0 > D.SWIPE_THR) {
+            x0 = x1;
+            y0 = y1;
+            for (int i = 0; i < D.MAIN_FIELD_CELL_H; i++) {
+                if (!mvBlk(0, 1)) {
+                    fixDelRstBlk();
+                    freeFallTimer = 0f;
+                    return;
+                }
+            }
+        }
     }
 
     if (Input.GetMouseButton(0)) {
         x1 = Input.mousePosition.x;
         y1 = Input.mousePosition.y;
+
+        if (Mathf.Abs((float) (x1 - x0)) > D.TOUCH_JUDGE_THR || Mathf.Abs((float) (y1 - y0)) > D.TOUCH_JUDGE_THR) {
+            touch = false;
+        }
+
     }
     
     if (x1 - x0 > D.SWIPE_THR) {
@@ -222,18 +279,17 @@ void Update()
         y0 = y1;
         mvBlk(-1, 0);
     }
-    else if (y1 - y0 > D.SWIPE_THR) {
-        x0 = x1;
-        y0 = y1;
-        mvBlk(0, -1);
-    }
     else if (y0 - y1 > D.SWIPE_THR) {
         x0 = x1;
         y0 = y1;
         if (!mvBlk(0, 1)) {
             fixDelRstBlk();
         }
+        freeFallTimer = 0f;
    }
+
+
+
 
 }
 
