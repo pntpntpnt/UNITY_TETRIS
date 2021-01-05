@@ -18,16 +18,38 @@ public class main : MonoBehaviour
     int blkY = D.INIT_POS_Y;
 
     double x0, y0, x1, y1;
-    // Block blk = new Block;
-    D.ST[,] blkShp = new D.ST[D.BLOCK_CELL_LEN, D.BLOCK_CELL_LEN];
 
     float freeFallTimer = 0f;
     
     bool touch;
 
-    Block blk = new Block();
+    D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
+        D.ST.III, D.ST.JJJ, D.ST.LLL, D.ST.OOO, D.ST.SSS, D.ST.TTT, D.ST.ZZZ,
+        D.ST.III, D.ST.JJJ, D.ST.LLL, D.ST.OOO, D.ST.SSS, D.ST.TTT, D.ST.ZZZ
+    };
 
-    
+    D.ST[] blkOrderAryTmp = new D.ST[D.BLOCK_NUM] {
+        D.ST.III, D.ST.JJJ, D.ST.LLL, D.ST.OOO, D.ST.SSS, D.ST.TTT, D.ST.ZZZ
+    };
+
+
+
+    static Block blkI = new Block(D.ST.III);
+    static Block blkJ = new Block(D.ST.JJJ);
+    static Block blkL = new Block(D.ST.LLL);
+    static Block blkO = new Block(D.ST.OOO);
+    static Block blkS = new Block(D.ST.SSS);
+    static Block blkT = new Block(D.ST.TTT);
+    static Block blkZ = new Block(D.ST.ZZZ);
+    static Block[] blkBag = new Block[D.BLOCK_NUM] {blkI, blkJ, blkL, blkO, blkS, blkT, blkZ};
+
+    short blkOrderCnt;
+    D.ST blkIndex;
+    static Block blk;
+    D.ROT_ST rotSt;
+    D.ST[,] blkShp = new D.ST[D.BLOCK_CELL_LEN, D.BLOCK_CELL_LEN];
+
+
 void Start()
 {
     for (int y = 0; y < D.MAIN_FIELD_CELL_H; y++) {
@@ -63,15 +85,47 @@ void Start()
 }
 
 void init() {
+    
+    blkOrderCnt = 0;
+    blkOrderAryTmp = shuffleAry(blkOrderAryTmp);
+    blkOrderAryTmp.CopyTo(blkOrderAry, 0);
+    blkOrderAryTmp = shuffleAry(blkOrderAryTmp);
+    blkOrderAryTmp.CopyTo(blkOrderAry, blkOrderAryTmp.Length);
+  
+    rotSt = D.ROT_ST.A;
+
     changeBlkShp();
-    blkShp = blk.shpA;
     putBlk();
+
+
+
 }
 
 void changeBlkShp() {
+    
 
-    blk.changeShp();
-    blkShp = blk.shpA;
+    if (blkOrderCnt == D.BLOCK_NUM) {
+        blkOrderCnt = 0;
+        blkOrderAryTmp.CopyTo(blkOrderAry, 0);
+        blkOrderAryTmp = shuffleAry(blkOrderAryTmp);
+        blkOrderAryTmp.CopyTo(blkOrderAry, blkOrderAryTmp.Length);
+    }
+
+    blkIndex = blkOrderAry[blkOrderCnt];
+    blkOrderCnt++;
+
+    switch (blkIndex)
+    {
+        case D.ST.III: blk = blkI; break;
+        case D.ST.JJJ: blk = blkJ; break;
+        case D.ST.LLL: blk = blkL; break;
+        case D.ST.OOO: blk = blkO; break;
+        case D.ST.SSS: blk = blkS; break;
+        case D.ST.TTT: blk = blkT; break;
+        case D.ST.ZZZ: blk = blkZ; break;
+    }
+
+    blkShp = blk.shp.A;
 
 
 }
@@ -211,11 +265,33 @@ void fixDelRstBlk() {
 
 void rotBlk() {
     delBlk();
-    blk.rotShp();
-    blkShp = blk.shp;
+
+    switch (rotSt) {
+        case D.ROT_ST.A: blkShp = blk.shp.B; rotSt = D.ROT_ST.B; break;
+        case D.ROT_ST.B: blkShp = blk.shp.C; rotSt = D.ROT_ST.C; break;
+        case D.ROT_ST.C: blkShp = blk.shp.D; rotSt = D.ROT_ST.D; break;
+        case D.ROT_ST.D: blkShp = blk.shp.A; rotSt = D.ROT_ST.A; break;
+    }
+    // blk.rotShp();
+    // blkShp = blk.shp;
     if (ablePutBlk()) {
         putBlk();
     }
+}
+
+static D.ST[] shuffleAry(D.ST[] ary) {
+
+    // Random r = new System.Random();
+    D.ST[] tmp = new D.ST[ary.Length];
+    int ran;
+
+    for (int i = ary.Length - 1; i >= 0 ; i--) {
+        ran = Random.Range(0, i + 1);
+        //ran = r.Next(0, i + 1);
+        tmp[i] = ary[ran];
+        ary[ran] = ary[i];
+    }
+    return tmp;
 }
 
 

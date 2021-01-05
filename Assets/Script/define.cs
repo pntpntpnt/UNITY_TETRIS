@@ -31,6 +31,8 @@ static class D
         D
     }
 
+    public const int BLOCK_NUM = 7;
+
     public const int INIT_POS_X = 7;
     public const int INIT_POS_Y = 3;
 
