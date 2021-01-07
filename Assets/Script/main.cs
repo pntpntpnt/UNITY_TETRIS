@@ -6,6 +6,20 @@ using UnityEngine;
 public class main : MonoBehaviour
 {
     public GameObject square;
+
+    public GameObject iii;
+    public GameObject jjj;
+    public GameObject lll;
+    public GameObject ooo;
+    public GameObject sss;
+    public GameObject ttt;
+    public GameObject zzz;
+    GameObject i, j, l, o, s, t, z;
+    GameObject i2, j2, l2, o2, s2, t2, z2;
+    GameObject i3, j3, l3, o3, s3, t3, z3;
+    GameObject ih, jh, lh, oh, sh, th, zh;
+
+
     GameObject gO;
     SpriteRenderer sR;
     Vector2 pos;
@@ -16,12 +30,18 @@ public class main : MonoBehaviour
 
     int blkX = D.INIT_POS_X;
     int blkY = D.INIT_POS_Y;
+    byte gstY;
 
     double x0, y0, x1, y1;
 
     float freeFallTimer = 0f;
     
     bool touch;
+
+    bool holdInit;
+    bool holdEn;
+    D.ST holdIndex;
+  
 
     D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
         D.ST.III, D.ST.JJJ, D.ST.LLL, D.ST.OOO, D.ST.SSS, D.ST.TTT, D.ST.ZZZ,
@@ -75,13 +95,56 @@ void Start()
             mainFldGui[y, x] = new Cell(sR);
             mainFldGui[y, x].color(mainFldAry[y, x]);
 
-
   
         }
     }
 
+
+
+    i = Instantiate(iii);
+    j = Instantiate(jjj);
+    l = Instantiate(lll);
+    o = Instantiate(ooo);
+    s = Instantiate(sss);
+    t = Instantiate(ttt);
+    z = Instantiate(zzz);
+
+    i2 = Instantiate(iii);
+    j2 = Instantiate(jjj);
+    l2 = Instantiate(lll);
+    o2 = Instantiate(ooo);
+    s2 = Instantiate(sss);
+    t2 = Instantiate(ttt);
+    z2 = Instantiate(zzz);
+
+    i3 = Instantiate(iii);
+    j3 = Instantiate(jjj);
+    l3 = Instantiate(lll);
+    o3 = Instantiate(ooo);
+    s3 = Instantiate(sss);
+    t3 = Instantiate(ttt);
+    z3 = Instantiate(zzz);
+
+    ih = Instantiate(iii);
+    jh = Instantiate(jjj);
+    lh = Instantiate(lll);
+    oh = Instantiate(ooo);
+    sh = Instantiate(sss);
+    th = Instantiate(ttt);
+    zh = Instantiate(zzz);
+
+
+    // Renderer r = i.GetComponent<Renderer>();
+    // r.material.color = new Color(0.239f, 0.957f, 0.957f); 
+
     init();
     
+
+    Debug.Log(Screen.width);
+    Debug.Log(Screen.height);
+
+
+
 }
 
 void init() {
@@ -94,10 +157,113 @@ void init() {
   
     rotSt = D.ROT_ST.A;
 
+    holdInit = true;;
+    holdEn = true;
+
     changeBlkShp();
     putBlk();
 
 
+}
+
+void holdBlk() {
+
+
+    if (holdInit) {
+        holdInit = false;
+        pos.x = -7.5f;
+        pos.y = 10f;
+        holdIndex = blkIndex;
+
+        switch (holdIndex)
+        {
+            case D.ST.III: ih.transform.position = pos; break;
+            case D.ST.JJJ: jh.transform.position = pos; break;
+            case D.ST.LLL: lh.transform.position = pos; break;
+            case D.ST.OOO: oh.transform.position = pos; break;
+            case D.ST.SSS: sh.transform.position = pos; break;
+            case D.ST.TTT: th.transform.position = pos; break;
+            case D.ST.ZZZ: zh.transform.position = pos; break;
+        }
+
+        delBlk();
+        changeBlkShp();
+
+        blkX = D.INIT_POS_X;
+        blkY = D.INIT_POS_Y;
+
+        if (ablePutBlk()) {
+            putBlk();
+        }
+
+    }
+
+    else if (holdEn) {
+        holdEn = false;
+
+        pos.x = -12f;
+        pos.y = 0f;
+
+        ih.transform.position = pos;
+        jh.transform.position = pos;
+        lh.transform.position = pos;
+        oh.transform.position = pos;
+        sh.transform.position = pos;
+        th.transform.position = pos;
+        zh.transform.position = pos;
+
+        pos.x = -7.5f;
+        pos.y = 10f;
+        switch (blkIndex)
+        {
+            case D.ST.III: ih.transform.position = pos; break;
+            case D.ST.JJJ: jh.transform.position = pos; break;
+            case D.ST.LLL: lh.transform.position = pos; break;
+            case D.ST.OOO: oh.transform.position = pos; break;
+            case D.ST.SSS: sh.transform.position = pos; break;
+            case D.ST.TTT: th.transform.position = pos; break;
+            case D.ST.ZZZ: zh.transform.position = pos; break;
+        }
+
+
+        delBlk();
+
+
+        D.ST tmp = blkIndex;
+
+        blkIndex = holdIndex;
+        holdIndex = tmp;
+
+
+
+        blkX = D.INIT_POS_X;
+        blkY = D.INIT_POS_Y;
+
+
+
+        switch (blkIndex)
+        {
+            case D.ST.III: blk = blkI; break;
+            case D.ST.JJJ: blk = blkJ; break;
+            case D.ST.LLL: blk = blkL; break;
+            case D.ST.OOO: blk = blkO; break;
+            case D.ST.SSS: blk = blkS; break;
+            case D.ST.TTT: blk = blkT; break;
+            case D.ST.ZZZ: blk = blkZ; break;
+        }
+
+
+        blkShp = blk.shp.A;
+        
+        rotSt = D.ROT_ST.A;
+
+
+        if (ablePutBlk()) {
+            putBlk();
+        }
+
+
+    }
 
 }
 
@@ -111,7 +277,75 @@ void changeBlkShp() {
         blkOrderAryTmp.CopyTo(blkOrderAry, blkOrderAryTmp.Length);
     }
 
+    pos.x = -12f;
+    pos.y = 0f;
+
+
+    i.transform.position = pos;
+    j.transform.position = pos;
+    l.transform.position = pos;
+    o.transform.position = pos;
+    s.transform.position = pos;
+    t.transform.position = pos;
+    z.transform.position = pos;
+    i2.transform.position = pos;
+    j2.transform.position = pos;
+    l2.transform.position = pos;
+    o2.transform.position = pos;
+    s2.transform.position = pos;
+    t2.transform.position = pos;
+    z2.transform.position = pos;
+    i3.transform.position = pos;
+    j3.transform.position = pos;
+    l3.transform.position = pos;
+    o3.transform.position = pos;
+    s3.transform.position = pos;
+    t3.transform.position = pos;
+    z3.transform.position = pos;
+
     blkIndex = blkOrderAry[blkOrderCnt];
+
+    pos.x = 7.5f;
+    pos.y = 10f;
+
+    switch (blkOrderAry[blkOrderCnt + 1])
+    {
+        case D.ST.III: i.transform.position = pos; break;
+        case D.ST.JJJ: j.transform.position = pos; break;
+        case D.ST.LLL: l.transform.position = pos; break;
+        case D.ST.OOO: o.transform.position = pos; break;
+        case D.ST.SSS: s.transform.position = pos; break;
+        case D.ST.TTT: t.transform.position = pos; break;
+        case D.ST.ZZZ: z.transform.position = pos; break;
+    }
+    pos.y = 6f;
+    switch (blkOrderAry[blkOrderCnt + 2])
+    {
+        case D.ST.III: i2.transform.position = pos; break;
+        case D.ST.JJJ: j2.transform.position = pos; break;
+        case D.ST.LLL: l2.transform.position = pos; break;
+        case D.ST.OOO: o2.transform.position = pos; break;
+        case D.ST.SSS: s2.transform.position = pos; break;
+        case D.ST.TTT: t2.transform.position = pos; break;
+        case D.ST.ZZZ: z2.transform.position = pos; break;
+    }
+    pos.y = 2f;
+    switch (blkOrderAry[blkOrderCnt + 3])
+    {
+        case D.ST.III: i3.transform.position = pos; break;
+        case D.ST.JJJ: j3.transform.position = pos; break;
+        case D.ST.LLL: l3.transform.position = pos; break;
+        case D.ST.OOO: o3.transform.position = pos; break;
+        case D.ST.SSS: s3.transform.position = pos; break;
+        case D.ST.TTT: t3.transform.position = pos; break;
+        case D.ST.ZZZ: z3.transform.position = pos; break;
+    }
+
+    // pos.x = -7.5f;
+    // pos.y = 10f;
+    // zh.transform.position = pos;
+
+
     blkOrderCnt++;
 
     switch (blkIndex)
@@ -125,14 +359,37 @@ void changeBlkShp() {
         case D.ST.ZZZ: blk = blkZ; break;
     }
 
+
+
+
+
     blkShp = blk.shp.A;
+    
+    rotSt = D.ROT_ST.A;
 
 
+}
+
+byte calcGstY() {
+    byte gy;
+    for (gy = (byte) blkY; gy <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; gy++) {
+        for (byte y = 0; y < D.BLOCK_CELL_LEN; y++) {
+            for (byte x = 0; x < D.BLOCK_CELL_LEN; x++) {
+                if (blkShp[y, x] != D.ST.NON) {
+                    if (mainFldAry[(byte) gy + y, blkX + x] == D.ST.FIX) {
+                        return (byte) (gy - 1);
+                    }
+                }
+            }
+        }
+    }
+    return (byte) (gy - 1);
 }
 
 
 void rstBlk() {
 
+    holdEn = true;
 
     blkX = D.INIT_POS_X;
     blkY = D.INIT_POS_Y;
@@ -146,12 +403,17 @@ void rstBlk() {
 }
 
 void delBlk() {
+
+    gstY = calcGstY();
+
     for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
         for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
             if (mainFldAry[y, x] != D.ST.FIX) {
                 if (mainFldAry[y, x] != D.ST.NON) {
                     mainFldAry[y, x] = D.ST.NON;
                     mainFldGui[y, x].color(mainFldAry[y, x]);
+                    mainFldGui[y - blkY + gstY, x].colorG(D.ST.NON);
+
                 }
             }
         }
@@ -159,11 +421,15 @@ void delBlk() {
 }
 
 void putBlk() {
+
+    gstY = calcGstY();
+
     for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
         for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
             //if (mainFldAry[y, x] != D.ST.FIX) {
             if (blkShp[y - blkY, x - blkX] != D.ST.NON) {
                 mainFldAry[y, x] = blkShp[y - blkY, x - blkX];
+                mainFldGui[y - blkY + gstY, x].colorG(mainFldAry[y, x]);
                 mainFldGui[y, x].color(mainFldAry[y, x]);
             }
         }
@@ -171,6 +437,7 @@ void putBlk() {
 }
 
 bool ablePutBlk() {
+
     for (int y = 0; y < D.BLOCK_CELL_LEN; y++) {
         for (int x = 0; x < D.BLOCK_CELL_LEN; x++) {
             if (blkShp[y, x] != D.ST.NON) {
@@ -263,31 +530,106 @@ void fixDelRstBlk() {
     rstBlk();
 }
 
-void rotBlk() {
+bool rotBlk() {
+
+    bool success = true;
     delBlk();
 
-    switch (rotSt) {
-        case D.ROT_ST.A: blkShp = blk.shp.B; rotSt = D.ROT_ST.B; break;
-        case D.ROT_ST.B: blkShp = blk.shp.C; rotSt = D.ROT_ST.C; break;
-        case D.ROT_ST.C: blkShp = blk.shp.D; rotSt = D.ROT_ST.D; break;
-        case D.ROT_ST.D: blkShp = blk.shp.A; rotSt = D.ROT_ST.A; break;
+
+    if (blkIndex == D.ST.III) {
+        switch (rotSt) {
+            case D.ROT_ST.A:
+                blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
+                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 0;}
+                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 1;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 3;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
+                break;
+            case D.ROT_ST.B:
+                blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 2;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 3;}
+                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY - 1;
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
+                break;
+            case D.ROT_ST.C:
+                blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
+                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 0;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 1;}
+                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 3;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
+                break;
+            case D.ROT_ST.D:
+                blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
+                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 2;}
+                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 3;}
+                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 1;
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
+                break;
+        }
+    } else {
+        switch (rotSt) {
+            case D.ROT_ST.A:
+                blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
+                break;
+            case D.ROT_ST.B:
+                blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
+                break;
+            case D.ROT_ST.C:
+                blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
+                break;
+            case D.ROT_ST.D:
+                blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY - 3;}
+                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
+                break;
+        }
     }
-    // blk.rotShp();
-    // blkShp = blk.shp;
-    if (ablePutBlk()) {
-        putBlk();
-    }
+
+    putBlk();
+
+
+    return success;
+
 }
 
 static D.ST[] shuffleAry(D.ST[] ary) {
 
-    // Random r = new System.Random();
     D.ST[] tmp = new D.ST[ary.Length];
     int ran;
 
     for (int i = ary.Length - 1; i >= 0 ; i--) {
         ran = Random.Range(0, i + 1);
-        //ran = r.Next(0, i + 1);
         tmp[i] = ary[ran];
         ary[ran] = ary[i];
     }
@@ -312,12 +654,24 @@ void Update()
         y0 = Input.mousePosition.y;
         x1 = x0;
         y1 = y0;
+
+
+        if ( x0 < Screen.width * 0.25) {
+            // Debug.Log("hello");
+            holdBlk();
+            touch = false;
+            return;
+        }
+
         touch = true;
+
+
     }
 
     if (Input.GetMouseButtonUp(0)) {
 
         if (touch) {
+            touch = false;
             rotBlk();
         }
 

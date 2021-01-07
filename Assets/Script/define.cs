@@ -36,8 +36,8 @@ static class D
     public const int INIT_POS_X = 7;
     public const int INIT_POS_Y = 3;
 
-    public const int SWIPE_THR = 16;
-    public const float TOUCH_JUDGE_THR = 8f;
+    public const int SWIPE_THR = 24;
+    public const float TOUCH_JUDGE_THR = 12f;
 
     public static readonly ST[,] NON = new ST[BLOCK_CELL_LEN, BLOCK_CELL_LEN]
     {{ST.NON, ST.NON, ST.NON, ST.NON},

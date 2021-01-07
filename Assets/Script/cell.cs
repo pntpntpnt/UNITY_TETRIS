@@ -52,6 +52,27 @@ public class Cell {
         break;
     }
   }
+  internal void colorG(D.ST st) {
+    switch (st)
+    {
+      case D.ST.NON: sR.color = new Color(0.6f, 0.6f, 0.6f, 1.0f); id = st;
+        break;
+      case D.ST.III: sR.color = new Color(0.620f, 0.976f, 0.976f); id = st; // 158, 249, 249
+        break;
+      case D.ST.JJJ: sR.color = new Color(0.620f, 0.800f, 0.976f); id = st; // 158, 204, 249
+        break;
+      case D.ST.LLL: sR.color = new Color(0.976f, 0.800f, 0.620f); id = st; // 249, 204, 158
+        break;
+      case D.ST.OOO: sR.color = new Color(0.976f, 0.976f, 0.620f); id = st; // 249, 249, 158
+        break;
+      case D.ST.SSS: sR.color = new Color(0.196f, 0.976f, 0.620f); id = st; // 204, 249, 158
+        break;
+      case D.ST.TTT: sR.color = new Color(0.976f, 0.620f, 0.976f); id = st; // 249, 158, 249
+        break;
+      case D.ST.ZZZ: sR.color = new Color(0.976f, 0.620f, 0.620f); id = st; // 249, 158, 158
+        break;
+    }
+  }
 
   internal D.ST getColorId() {
     return id;
