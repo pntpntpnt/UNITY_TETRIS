@@ -36,7 +36,6 @@ static class D
     public const int INIT_POS_X = 7;
     public const int INIT_POS_Y = 3;
 
-    public const int SWIPE_THR = 24;
     public const float TOUCH_JUDGE_THR = 12f;
 
     public static readonly ST[,] NON = new ST[BLOCK_CELL_LEN, BLOCK_CELL_LEN]
@@ -200,7 +199,17 @@ static class D
     {ST.NON, ST.NON, ST.NON, ST.NON}};
 
 
+    public static float HOLD_X_POS = -8f;
+    public static float HOLD_Y_POS = 10f;
 
+    public static float NEXT_X_POS = 8f;
+    public static float NEXT_Y_POS = 10f;
+
+    public static float NEXT_2_Y_POS = 6f;
+    
+    public static float NEXT_3_Y_POS = 2f;
+    
+    public static float SCRN_OUT_POS = -16f;
 
 
 

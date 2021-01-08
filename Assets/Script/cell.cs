@@ -29,6 +29,8 @@ public class Cell {
         break;
       case D.ST.ZZZ: sR.color = new Color(0.957f, 0.239f, 0.239f); id = st; // 244, 61, 61
         break;
+      case D.ST.FIX: sR.color = new Color(0.3f, 0.3f, 0.3f, 1.0f); id = st;
+        break;
     }
   }
   internal void colorF(D.ST st) {

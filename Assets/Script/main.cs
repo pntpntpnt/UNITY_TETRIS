@@ -7,6 +7,9 @@ public class main : MonoBehaviour
 {
     public GameObject square;
 
+    public GameObject gameOverScrn;
+    bool gameOver;
+
     public GameObject iii;
     public GameObject jjj;
     public GameObject lll;
@@ -20,9 +23,39 @@ public class main : MonoBehaviour
     GameObject ih, jh, lh, oh, sh, th, zh;
 
 
+    int delLineCnt;
+
     GameObject gO;
     SpriteRenderer sR;
     Vector2 pos;
+
+    public GameObject numW1_0;
+    public GameObject numW2_0;
+    public GameObject numW3_0;
+    public GameObject numH1_0;
+    public GameObject numH2_0;
+    public GameObject numH3_0;
+    public GameObject numH4_0;
+
+    public GameObject numW1_1;
+    public GameObject numW2_1;
+    public GameObject numW3_1;
+    public GameObject numH1_1;
+    public GameObject numH2_1;
+    public GameObject numH3_1;
+    public GameObject numH4_1;
+
+    public GameObject numW1_2;
+    public GameObject numW2_2;
+    public GameObject numW3_2;
+    public GameObject numH1_2;
+    public GameObject numH2_2;
+    public GameObject numH3_2;
+    public GameObject numH4_2;
+
+    float swipeThr = (float) Screen.width * 0.08f;
+
+    byte rstClickCnt;
 
     D.ST[,] mainFldAry = new D.ST[D.MAIN_FIELD_CELL_H, D.MAIN_FIELD_CELL_W];
 
@@ -41,7 +74,10 @@ public class main : MonoBehaviour
     bool holdInit;
     bool holdEn;
     D.ST holdIndex;
-  
+
+    byte fixCnt;
+    bool ableMove;
+
 
     D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
         D.ST.III, D.ST.JJJ, D.ST.LLL, D.ST.OOO, D.ST.SSS, D.ST.TTT, D.ST.ZZZ,
@@ -95,10 +131,33 @@ void Start()
             mainFldGui[y, x] = new Cell(sR);
             mainFldGui[y, x].color(mainFldAry[y, x]);
 
+            if (x == D.BLOCK_CELL_LEN - 2 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
+                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+                sR.transform.position = pos;
+            }
+            if (x == D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
+                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+                sR.transform.position = pos;
+            }
+            if (y == D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1 && x >= D.BLOCK_CELL_LEN - 2 && x <= D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1) {
+                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+                sR.transform.position = pos;
+            }
+
+
   
         }
     }
 
+
+
+
+
+    gameOverScrn.SetActive(false);
+    gameOver = false;
 
 
     i = Instantiate(iii);
@@ -138,12 +197,166 @@ void Start()
     // r.material.color = new Color(0.239f, 0.957f, 0.957f); 
 
     init();
-    
 
-    Debug.Log(Screen.width);
-    Debug.Log(Screen.height);
+    rstClickCnt = 0;
+
+    numW2_0.SetActive(false);
+    numW2_1.SetActive(false);
+    numW2_2.SetActive(false);
 
 
+}
+
+void delLineCntr() {
+    delLineCnt++;
+    if (delLineCnt > 999) {
+        delLineCnt = 999;
+    }
+    Debug.Log(delLineCnt);
+
+    switch (delLineCnt % 10)
+    {
+        case 0:
+            numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(true); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(false); numW3_0.SetActive(true); break;
+        case 1:
+            numH1_0.SetActive(false); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(false); numW2_0.SetActive(false); numW3_0.SetActive(false); break;
+        case 2:
+            numH1_0.SetActive(false); numH2_0.SetActive(true); numH3_0.SetActive(true); numH4_0.SetActive(false);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+        case 3:
+            numH1_0.SetActive(false); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+        case 4:
+            numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(false); numW2_0.SetActive(true); numW3_0.SetActive(false); break;
+        case 5:
+            numH1_0.SetActive(true); numH2_0.SetActive(false); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+        case 6:
+            numH1_0.SetActive(true); numH2_0.SetActive(false); numH3_0.SetActive(true); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+        case 7:
+            numH1_0.SetActive(false); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(false); numW3_0.SetActive(false); break;
+        case 8:
+            numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(true); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+        case 9:
+            numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
+            numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
+    }
+    switch ((int) (delLineCnt / 10))
+    {
+        case 0:
+            numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(true); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(false); numW3_1.SetActive(true); break;
+        case 1:
+            numH1_1.SetActive(false); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(false); numW2_1.SetActive(false); numW3_1.SetActive(false); break;
+        case 2:
+            numH1_1.SetActive(false); numH2_1.SetActive(true); numH3_1.SetActive(true); numH4_1.SetActive(false);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+        case 3:
+            numH1_1.SetActive(false); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+        case 4:
+            numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(false); numW2_1.SetActive(true); numW3_1.SetActive(false); break;
+        case 5:
+            numH1_1.SetActive(true); numH2_1.SetActive(false); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+        case 6:
+            numH1_1.SetActive(true); numH2_1.SetActive(false); numH3_1.SetActive(true); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+        case 7:
+            numH1_1.SetActive(false); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(false); numW3_1.SetActive(false); break;
+        case 8:
+            numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(true); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+        case 9:
+            numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
+            numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
+    }
+    switch ((int) (delLineCnt / 100))
+    {
+        case 0:
+            numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(true); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(false); numW3_2.SetActive(true); break;
+        case 1:
+            numH1_2.SetActive(false); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(false); numW2_2.SetActive(false); numW3_2.SetActive(false); break;
+        case 2:
+            numH1_2.SetActive(false); numH2_2.SetActive(true); numH3_2.SetActive(true); numH4_2.SetActive(false);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+        case 3:
+            numH1_2.SetActive(false); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+        case 4:
+            numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(false); numW2_2.SetActive(true); numW3_2.SetActive(false); break;
+        case 5:
+            numH1_2.SetActive(true); numH2_2.SetActive(false); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+        case 6:
+            numH1_2.SetActive(true); numH2_2.SetActive(false); numH3_2.SetActive(true); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+        case 7:
+            numH1_2.SetActive(false); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(false); numW3_2.SetActive(false); break;
+        case 8:
+            numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(true); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+        case 9:
+            numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
+            numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+    }
+
+}
+
+void restart() {
+    gameOver = false;
+    gameOverScrn.SetActive(false);
+    rstClickCnt = 0;
+    for (int y = 0; y < D.MAIN_FIELD_CELL_H; y++) {
+        for (int x = 0; x < D.MAIN_FIELD_CELL_W; x++) {    
+            if (x < D.BLOCK_CELL_LEN - 1 || x > D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN
+            || y < D.BLOCK_CELL_LEN - 1 || y > D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
+            } else {
+                mainFldAry[y, x] = D.ST.NON; 
+            }
+            mainFldGui[y, x].color(mainFldAry[y, x]);
+  
+        }
+    }
+
+        
+    blkOrderCnt = 0;
+    blkOrderAryTmp = shuffleAry(blkOrderAryTmp);
+    blkOrderAryTmp.CopyTo(blkOrderAry, 0);
+    blkOrderAryTmp = shuffleAry(blkOrderAryTmp);
+    blkOrderAryTmp.CopyTo(blkOrderAry, blkOrderAryTmp.Length);
+  
+    rotSt = D.ROT_ST.A;
+
+    holdInit = true;;
+    holdEn = true;
+
+    changeBlkShp();
+    putBlk();
+
+
+    pos.x = D.SCRN_OUT_POS;
+
+    ih.transform.position = pos;
+    jh.transform.position = pos;
+    lh.transform.position = pos;
+    oh.transform.position = pos;
+    sh.transform.position = pos;
+    th.transform.position = pos;
+    zh.transform.position = pos;
 
 }
 
@@ -168,11 +381,17 @@ void init() {
 
 void holdBlk() {
 
+    if (gameOver) {
+        return;
+    }
+
 
     if (holdInit) {
         holdInit = false;
-        pos.x = -7.5f;
-        pos.y = 10f;
+        holdEn = false;
+
+        pos.x = D.HOLD_X_POS;
+        pos.y = D.HOLD_Y_POS;
         holdIndex = blkIndex;
 
         switch (holdIndex)
@@ -201,8 +420,7 @@ void holdBlk() {
     else if (holdEn) {
         holdEn = false;
 
-        pos.x = -12f;
-        pos.y = 0f;
+        pos.x = D.SCRN_OUT_POS;
 
         ih.transform.position = pos;
         jh.transform.position = pos;
@@ -212,8 +430,8 @@ void holdBlk() {
         th.transform.position = pos;
         zh.transform.position = pos;
 
-        pos.x = -7.5f;
-        pos.y = 10f;
+        pos.x = D.HOLD_X_POS;
+        pos.y = D.HOLD_Y_POS;
         switch (blkIndex)
         {
             case D.ST.III: ih.transform.position = pos; break;
@@ -269,6 +487,9 @@ void holdBlk() {
 
 void changeBlkShp() {
     
+    if (gameOver) {
+        return;
+    }
 
     if (blkOrderCnt == D.BLOCK_NUM) {
         blkOrderCnt = 0;
@@ -277,9 +498,11 @@ void changeBlkShp() {
         blkOrderAryTmp.CopyTo(blkOrderAry, blkOrderAryTmp.Length);
     }
 
-    pos.x = -12f;
-    pos.y = 0f;
+    ableMove = false;
+    
+    pos.x = D.SCRN_OUT_POS;
 
+    fixCnt = 0;
 
     i.transform.position = pos;
     j.transform.position = pos;
@@ -305,8 +528,8 @@ void changeBlkShp() {
 
     blkIndex = blkOrderAry[blkOrderCnt];
 
-    pos.x = 7.5f;
-    pos.y = 10f;
+    pos.x = D.NEXT_X_POS;
+    pos.y = D.NEXT_Y_POS;
 
     switch (blkOrderAry[blkOrderCnt + 1])
     {
@@ -318,7 +541,7 @@ void changeBlkShp() {
         case D.ST.TTT: t.transform.position = pos; break;
         case D.ST.ZZZ: z.transform.position = pos; break;
     }
-    pos.y = 6f;
+    pos.y = D.NEXT_2_Y_POS;
     switch (blkOrderAry[blkOrderCnt + 2])
     {
         case D.ST.III: i2.transform.position = pos; break;
@@ -329,7 +552,7 @@ void changeBlkShp() {
         case D.ST.TTT: t2.transform.position = pos; break;
         case D.ST.ZZZ: z2.transform.position = pos; break;
     }
-    pos.y = 2f;
+    pos.y = D.NEXT_3_Y_POS;
     switch (blkOrderAry[blkOrderCnt + 3])
     {
         case D.ST.III: i3.transform.position = pos; break;
@@ -398,6 +621,20 @@ void rstBlk() {
 
     if (ablePutBlk()) {
         putBlk();
+    }
+    else {
+        for (int y = blkY; y < blkY + D.BLOCK_CELL_LEN; y++) {
+            for (int x = blkX; x < blkX + D.BLOCK_CELL_LEN; x++) {
+                if (blkShp[y - blkY, x - blkX] != D.ST.NON) {
+                    mainFldAry[y, x] = blkShp[y - blkY, x - blkX];
+                    mainFldGui[y, x].color(mainFldAry[y, x]);
+                }
+            }
+        }
+        
+        fixBlk();
+        gameOver = true;
+        gameOverScrn.SetActive(true);
     }
 
 }
@@ -521,6 +758,7 @@ void fixDelRstBlk() {
     for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
         if (checkLine(y)) {
             delLine(y);
+            delLineCntr();
             y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
         }
     }
@@ -640,6 +878,18 @@ static D.ST[] shuffleAry(D.ST[] ary) {
 // Update is called once per frame
 void Update()
 {
+
+    if (gameOver) {
+        if (Input.GetMouseButtonDown(0)) {
+            rstClickCnt++;
+        }
+        if (rstClickCnt == 3) {
+            rstClickCnt++;
+            restart();
+        }
+        return;
+    }
+
     freeFallTimer += Time.deltaTime;
     if (freeFallTimer > D.FREE_FALL_TIME){
         if (!mvBlk(0, 1)) {
@@ -650,6 +900,9 @@ void Update()
 
 
     if (Input.GetMouseButtonDown(0)) {
+
+        ableMove = true;
+
         x0 = Input.mousePosition.x;
         y0 = Input.mousePosition.y;
         x1 = x0;
@@ -670,13 +923,13 @@ void Update()
 
     if (Input.GetMouseButtonUp(0)) {
 
-        if (touch) {
+        if (touch && ableMove) {
             touch = false;
             rotBlk();
         }
 
 
-        if (y1 - y0 > D.SWIPE_THR) {
+        if (y1 - y0 > swipeThr && ableMove) {
             x0 = x1;
             y0 = y1;
             for (int i = 0; i < D.MAIN_FIELD_CELL_H; i++) {
@@ -699,21 +952,25 @@ void Update()
 
     }
     
-    if (x1 - x0 > D.SWIPE_THR) {
+    if (x1 - x0 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
         mvBlk(1, 0);
     }
-    else if (x0 - x1 > D.SWIPE_THR) {
+    else if (x0 - x1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
         mvBlk(-1, 0);
     }
-    else if (y0 - y1 > D.SWIPE_THR) {
+    else if (y0 - y1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
         if (!mvBlk(0, 1)) {
-            fixDelRstBlk();
+            fixCnt++;
+            if (fixCnt == 3) {
+                fixCnt = 0;
+                fixDelRstBlk();
+            }
         }
         freeFallTimer = 0f;
    }
