@@ -22,6 +22,8 @@ public class main : MonoBehaviour
     GameObject i3, j3, l3, o3, s3, t3, z3;
     GameObject ih, jh, lh, oh, sh, th, zh;
 
+    public GameObject dif1, dif2, dif3, dif4, dif5;
+
 
     int delLineCnt;
 
@@ -53,7 +55,8 @@ public class main : MonoBehaviour
     public GameObject numH3_2;
     public GameObject numH4_2;
 
-    float swipeThr = (float) Screen.width * 0.08f;
+    float swipeThr = (float) Screen.width * 0.05f;
+    float touchThr = (float) Screen.width * 0.01f;
 
     byte rstClickCnt;
 
@@ -65,11 +68,16 @@ public class main : MonoBehaviour
     int blkY = D.INIT_POS_Y;
     byte gstY;
 
+    bool hardDrop = false;
+
+
     double x0, y0, x1, y1;
 
     float freeFallTimer = 0f;
     
     bool touch;
+
+
 
     bool holdInit;
     bool holdEn;
@@ -77,6 +85,11 @@ public class main : MonoBehaviour
 
     byte fixCnt;
     bool ableMove;
+
+    int combo;
+    bool ren;
+    int renCnt;
+
 
 
     D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
@@ -152,10 +165,6 @@ void Start()
         }
     }
 
-
-
-
-
     gameOverScrn.SetActive(false);
     gameOver = false;
 
@@ -204,15 +213,30 @@ void Start()
     numW2_1.SetActive(false);
     numW2_2.SetActive(false);
 
+    ren = false;
+    renCnt = 1;
+
+    dif1.SetActive(false);
+    dif2.SetActive(false);
+    dif3.SetActive(false);
+    dif4.SetActive(false);
+    dif5.SetActive(false);
+
+
 
 }
 
 void delLineCntr() {
-    delLineCnt++;
+
+ 
+    delLineCnt = delLineCnt + 1;
+ 
     if (delLineCnt > 999) {
         delLineCnt = 999;
     }
+
     Debug.Log(delLineCnt);
+
 
     switch (delLineCnt % 10)
     {
@@ -358,6 +382,14 @@ void restart() {
     th.transform.position = pos;
     zh.transform.position = pos;
 
+
+    delLineCnt = -1;
+    delLineCntr();
+
+    ableMove = false;
+
+    combo = 0;
+
 }
 
 void init() {
@@ -384,6 +416,8 @@ void holdBlk() {
     if (gameOver) {
         return;
     }
+
+
 
 
     if (holdInit) {
@@ -479,6 +513,8 @@ void holdBlk() {
         if (ablePutBlk()) {
             putBlk();
         }
+
+
 
 
     }
@@ -699,6 +735,19 @@ void fixBlk() {
     }
 }
 
+bool checkGnd() {
+    for (int y = 0; y < D.BLOCK_CELL_LEN; y++) {
+        for (int x = 0; x < D.BLOCK_CELL_LEN; x++) {
+            if (blkShp[y, x] != D.ST.NON) {
+                if (mainFldAry[blkY + y, blkX + x] == D.ST.FIX) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
 bool mvBlk(int dx, int dy) {
     delBlk();
 
@@ -754,6 +803,8 @@ void delLine(int y) {
 }
 
 void fixDelRstBlk() {
+
+
     fixBlk();
     for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
         if (checkLine(y)) {
@@ -762,7 +813,6 @@ void fixDelRstBlk() {
             y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
         }
     }
-
 
 
     rstBlk();
@@ -875,6 +925,7 @@ static D.ST[] shuffleAry(D.ST[] ary) {
 }
 
 
+
 // Update is called once per frame
 void Update()
 {
@@ -894,6 +945,8 @@ void Update()
     if (freeFallTimer > D.FREE_FALL_TIME){
         if (!mvBlk(0, 1)) {
             fixDelRstBlk();
+                // Invoke("fixDelRstBlk", 0.5f);
+
         }
         freeFallTimer = 0f;
     }
@@ -909,7 +962,7 @@ void Update()
         y1 = y0;
 
 
-        if ( x0 < Screen.width * 0.25) {
+        if ( x0 < Screen.width * 0.2) {
             // Debug.Log("hello");
             holdBlk();
             touch = false;
@@ -923,22 +976,29 @@ void Update()
 
     if (Input.GetMouseButtonUp(0)) {
 
-        if (touch && ableMove) {
+        if (touch && ableMove && !hardDrop) {
             touch = false;
-            rotBlk();
+            if (rotBlk()) {
+             
+
+
+            }
         }
 
 
         if (y1 - y0 > swipeThr && ableMove) {
             x0 = x1;
             y0 = y1;
+            hardDrop = true;
             for (int i = 0; i < D.MAIN_FIELD_CELL_H; i++) {
                 if (!mvBlk(0, 1)) {
                     fixDelRstBlk();
                     freeFallTimer = 0f;
+                    hardDrop = false;
                     return;
                 }
             }
+
         }
     }
 
@@ -946,7 +1006,7 @@ void Update()
         x1 = Input.mousePosition.x;
         y1 = Input.mousePosition.y;
 
-        if (Mathf.Abs((float) (x1 - x0)) > D.TOUCH_JUDGE_THR || Mathf.Abs((float) (y1 - y0)) > D.TOUCH_JUDGE_THR) {
+        if (Mathf.Abs((float) (x1 - x0)) > touchThr || Mathf.Abs((float) (y1 - y0)) > touchThr) {
             touch = false;
         }
 
@@ -955,12 +1015,14 @@ void Update()
     if (x1 - x0 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
-        mvBlk(1, 0);
+        if (mvBlk(1, 0)) {
+        }
     }
     else if (x0 - x1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
-        mvBlk(-1, 0);
+        if (mvBlk(-1, 0)) {
+        }
     }
     else if (y0 - y1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;

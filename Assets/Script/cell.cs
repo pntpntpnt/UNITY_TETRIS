@@ -67,7 +67,7 @@ public class Cell {
         break;
       case D.ST.OOO: sR.color = new Color(0.976f, 0.976f, 0.620f); id = st; // 249, 249, 158
         break;
-      case D.ST.SSS: sR.color = new Color(0.196f, 0.976f, 0.620f); id = st; // 204, 249, 158
+      case D.ST.SSS: sR.color = new Color(0.800f, 0.976f, 0.620f); id = st; // 204, 249, 158
         break;
       case D.ST.TTT: sR.color = new Color(0.976f, 0.620f, 0.976f); id = st; // 249, 158, 249
         break;

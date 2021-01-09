@@ -4,7 +4,7 @@ using UnityEngine;
 
 static class D
 {
-    public const float FREE_FALL_TIME = 1f;
+    public const float FREE_FALL_TIME = 0.1f;
 
     public const int MAIN_FIELD_CELL_W = 16;
     public const int MAIN_FIELD_CELL_H = 26;
@@ -35,8 +35,6 @@ static class D
 
     public const int INIT_POS_X = 7;
     public const int INIT_POS_Y = 3;
-
-    public const float TOUCH_JUDGE_THR = 12f;
 
     public static readonly ST[,] NON = new ST[BLOCK_CELL_LEN, BLOCK_CELL_LEN]
     {{ST.NON, ST.NON, ST.NON, ST.NON},
@@ -199,15 +197,15 @@ static class D
     {ST.NON, ST.NON, ST.NON, ST.NON}};
 
 
-    public static float HOLD_X_POS = -8f;
-    public static float HOLD_Y_POS = 10f;
+    public static float HOLD_X_POS = -7.25f;
+    public static float HOLD_Y_POS = 9.5f;
 
-    public static float NEXT_X_POS = 8f;
-    public static float NEXT_Y_POS = 10f;
+    public static float NEXT_X_POS = 7.25f;
+    public static float NEXT_Y_POS = 9.5f;
 
-    public static float NEXT_2_Y_POS = 6f;
+    public static float NEXT_2_Y_POS = 5.5f;
     
-    public static float NEXT_3_Y_POS = 2f;
+    public static float NEXT_3_Y_POS = 1.5f;
     
     public static float SCRN_OUT_POS = -16f;
 
