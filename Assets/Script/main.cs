@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 public class main : MonoBehaviour
 {
@@ -21,9 +21,6 @@ public class main : MonoBehaviour
     GameObject i2, j2, l2, o2, s2, t2, z2;
     GameObject i3, j3, l3, o3, s3, t3, z3;
     GameObject ih, jh, lh, oh, sh, th, zh;
-
-    public GameObject dif1, dif2, dif3, dif4, dif5;
-
 
     int delLineCnt;
 
@@ -219,11 +216,6 @@ void Start()
     ren = false;
     renCnt = 1;
 
-    dif1.SetActive(false);
-    dif2.SetActive(false);
-    dif3.SetActive(false);
-    dif4.SetActive(false);
-    dif5.SetActive(false);
 
 
 
@@ -823,10 +815,65 @@ void delLine(int y) {
     }
 }
 
+
+void addline() {
+
+    //  D.ST[,] tmp = new D.ST[D.MAIN_FIELD_CELL_H, D.MAIN_FIELD_CELL_W];
+    
+    //  Array.Copy(mainFldAry, tmp, mainFldAry.Length);
+
+    // Debug.Log("add");
+
+    // Debug.Log(mainFldAry[22, 3] + ", " + mainFldAry[23, 3]);// + ", " + tmp[22, 3] + ", " + tmp[23, 3]);
+
+    // Debug.Log(mainFldAry[22, 12]);
+
+    // int tmp = 3;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 4;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 5;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 6;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 7;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 8;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 9;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 10;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // tmp = 11;
+    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+    // // tmp = 12;
+    // // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
+
+    // mainFldAry.SetValue(mainFldAry[4, 12], 3, 12); 
+    // mainFldAry.SetValue(mainFldAry[5, 12], 4, 12); 
+    // mainFldAry.SetValue(mainFldAry[6, 12], 5, 12); 
+    // mainFldAry.SetValue(mainFldAry[7, 12], 6, 12); 
+
+    // for (int y = D.BLOCK_CELL_LEN - 1; y < D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1; y++) {
+    //     for (int x = D.BLOCK_CELL_LEN - 1; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1 - 1; x++) {
+    //             mainFldAry.SetValue(mainFldAry[y + 1, x], y, x);
+    //         mainFldGui[y, x].color(mainFldAry[y, x]);
+    //     }
+    // }
+
+    // Debug.Log(mainFldAry[22, 12]);
+
+    // Debug.Log(mainFldAry[22, 3] + ", " + mainFldAry[23, 3]);// + ", " + tmp[22, 3] + ", " + tmp[23, 3]);
+
+
+   
+}
+
 void fixDelRstBlk() {
 
-
     fixBlk();
+
+
     for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
         if (checkLine(y)) {
             delLine(y);
@@ -836,7 +883,15 @@ void fixDelRstBlk() {
     }
 
 
+
+    // Debug.Log(mainFldAry[22, 12]);
+
+    // addline();
+    // Debug.Log(mainFldAry[22, 12]);
+
+
     rstBlk();
+
 }
 
 bool rotBlk() {
@@ -917,7 +972,7 @@ bool rotBlk() {
                 blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
                 if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                 if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
-                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY - 3;}
+                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
                 if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
                 if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
                     blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
@@ -938,7 +993,7 @@ static D.ST[] shuffleAry(D.ST[] ary) {
     int ran;
 
     for (int i = ary.Length - 1; i >= 0 ; i--) {
-        ran = Random.Range(0, i + 1);
+        ran = UnityEngine.Random.Range(0, i + 1);
         tmp[i] = ary[ran];
         ary[ran] = ary[i];
     }

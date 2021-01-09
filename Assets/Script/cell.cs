@@ -52,6 +52,8 @@ public class Cell {
         break;
       case D.ST.ZZZ: sR.color = new Color(0.376f, 0.020f, 0.020f); id = st; // 96, 5, 5
         break;
+      case D.ST.FIX: sR.color = new Color(0.3f, 0.3f, 0.3f, 1.0f); id = st;
+        break;
     }
   }
   internal void colorG(D.ST st) {
