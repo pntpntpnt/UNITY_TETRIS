@@ -952,22 +952,27 @@ void Update()
         }
         fixTimerSetDone = false;
         CancelInvoke();
-        Invoke("fixDelRstBlk", D.FIX_MARGIN);
         actCnt = 0;
         return;
     }
 
 
-    // if (checkGnd()) {
-    //     if (!fixTimerSetDone) {
-    //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
-    //         fixTimerSetDone = true;
-    //     }
-    // }
+    if (checkGnd()) {
+        if (!fixTimerSetDone) {
+            CancelInvoke();
+            Debug.Log("timer set");
+            Invoke("fixDelRstBlk", D.FIX_MARGIN);
+            fixTimerSetDone = true;
+            actCnt = 0;
+
+        }
+    }
+
 
 
     freeFallTimer += Time.deltaTime;
     if (freeFallTimer > D.FREE_FALL_TIME){
+        mvBlk(0, 1);
         // if (mvBlk(0, 1)) {
         //     // Debug.Log(maxY);
         //     // Debug.Log(blkY);
@@ -980,10 +985,10 @@ void Update()
         //         actCnt = 0;
         //     }
         // }
-        if (!mvBlk(0, 1)) {
-            fixDelRstBlk();
+        // if (!mvBlk(0, 1)) {
+            // fixDelRstBlk();
                 // Invoke("fixDelRstBlk", 0.5f);
-        }
+        // }
         freeFallTimer = 0f;
     }
 
@@ -1015,6 +1020,13 @@ void Update()
         if (touch && ableMove && !hardDrop) {
             touch = false;
             if (rotBlk()) {
+                if (fixTimerSetDone) {
+                    CancelInvoke();
+                    fixTimerSetDone = false;
+                    Debug.Log("cancel");
+                    actCnt = 0;
+
+                }
                 // actCnt++;
                 // // Debug.Log(actCnt);
                 // CancelInvoke();
@@ -1060,6 +1072,17 @@ void Update()
         x0 = x1;
         y0 = y1;
         if (mvBlk(1, 0)) {
+
+            if (fixTimerSetDone) {
+                CancelInvoke();
+                fixTimerSetDone = false;
+                Debug.Log("cancel");
+                actCnt = 0;
+
+            }
+    
+            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
+
             // actCnt++;
             // // Debug.Log(actCnt);
             // CancelInvoke();
@@ -1076,6 +1099,14 @@ void Update()
         x0 = x1;
         y0 = y1;
         if (mvBlk(-1, 0)) {
+            if (fixTimerSetDone) {
+                CancelInvoke();
+                fixTimerSetDone = false;
+                Debug.Log("cancel");
+                actCnt = 0;
+
+            }
+
             // actCnt++;
             // // Debug.Log(actCnt);
             // CancelInvoke();
