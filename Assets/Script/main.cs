@@ -78,7 +78,6 @@ public class main : MonoBehaviour
     bool touch;
 
 
-
     bool holdInit;
     bool holdEn;
     D.ST holdIndex;
@@ -93,6 +92,7 @@ public class main : MonoBehaviour
     byte actCnt = 0;
     bool fixTimerSetDone = false;
     int maxY = D.INIT_POS_Y;
+    bool speedFix = false;
 
 
     D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
@@ -420,15 +420,14 @@ void holdBlk() {
         return;
     }
     
-    
-    fixTimerSetDone = false;
-    CancelInvoke();
-    actCnt = 0;
-
-
-
-
     if (holdInit) {
+
+        fixTimerSetDone = false;
+        CancelInvoke();
+        actCnt = 0;
+        speedFix = false;
+
+
         holdInit = false;
         holdEn = false;
 
@@ -461,6 +460,12 @@ void holdBlk() {
     }
 
     else if (holdEn) {
+
+        fixTimerSetDone = false;
+        CancelInvoke();
+        actCnt = 0;
+        speedFix = false;
+
         holdEn = false;
 
         pos.x = D.SCRN_OUT_POS;
@@ -664,6 +669,10 @@ void rstBlk() {
     blkY = D.INIT_POS_Y;
     maxY = blkY;
 
+    fixTimerSetDone = false;
+    CancelInvoke();
+    actCnt = 0;
+    speedFix = false;
 
     changeBlkShp();
 
@@ -953,21 +962,30 @@ void Update()
         fixTimerSetDone = false;
         CancelInvoke();
         actCnt = 0;
+        speedFix = false;
+
         return;
     }
 
 
+
+
     if (checkGnd()) {
-        if (!fixTimerSetDone) {
-            CancelInvoke();
-            Debug.Log("timer set");
-            Invoke("fixDelRstBlk", D.FIX_MARGIN);
-            fixTimerSetDone = true;
+        if (speedFix) {
+            speedFix = false;
             actCnt = 0;
 
+            fixDelRstBlk();
+            return;
         }
+        if (!fixTimerSetDone) {
+            CancelInvoke();
+            // Debug.Log("timer set");
+            Invoke("fixDelRstBlk", D.FIX_MARGIN);
+            fixTimerSetDone = true;
+        }
+    
     }
-
 
 
     freeFallTimer += Time.deltaTime;
@@ -989,6 +1007,11 @@ void Update()
             // fixDelRstBlk();
                 // Invoke("fixDelRstBlk", 0.5f);
         // }
+        if (blkY > maxY) {
+            maxY = blkY;
+            actCnt = 0;
+            speedFix = false;
+        }
         freeFallTimer = 0f;
     }
 
@@ -1020,13 +1043,23 @@ void Update()
         if (touch && ableMove && !hardDrop) {
             touch = false;
             if (rotBlk()) {
+
+                actCnt++;
+                if (actCnt >= 15) speedFix = true;
+
+
                 if (fixTimerSetDone) {
                     CancelInvoke();
                     fixTimerSetDone = false;
-                    Debug.Log("cancel");
-                    actCnt = 0;
-
+                    // Debug.Log("cancel");
                 }
+
+                if (blkY > maxY) {
+                    maxY = blkY;
+                    actCnt = 0;
+                    speedFix = false;
+                }
+
                 // actCnt++;
                 // // Debug.Log(actCnt);
                 // CancelInvoke();
@@ -1073,11 +1106,14 @@ void Update()
         y0 = y1;
         if (mvBlk(1, 0)) {
 
+            actCnt++;
+            if (actCnt >= 15) speedFix = true;
+
+
             if (fixTimerSetDone) {
                 CancelInvoke();
                 fixTimerSetDone = false;
-                Debug.Log("cancel");
-                actCnt = 0;
+                // Debug.Log("cancel");
 
             }
     
@@ -1099,11 +1135,13 @@ void Update()
         x0 = x1;
         y0 = y1;
         if (mvBlk(-1, 0)) {
+            actCnt++;
+            if (actCnt >= 15) speedFix = true;
+
             if (fixTimerSetDone) {
                 CancelInvoke();
                 fixTimerSetDone = false;
-                Debug.Log("cancel");
-                actCnt = 0;
+                // Debug.Log("cancel");
 
             }
 
@@ -1130,6 +1168,14 @@ void Update()
                 fixDelRstBlk();
             }
         }
+        else {
+           if (blkY > maxY) {
+               maxY = blkY;
+               actCnt = 0;
+               speedFix = false;
+           }
+        }
+         
         // else {
         //     if (blkY > maxY) {
         //         maxY = blkY;
