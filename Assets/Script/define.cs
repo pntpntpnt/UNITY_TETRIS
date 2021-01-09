@@ -4,7 +4,7 @@ using UnityEngine;
 
 static class D
 {
-    public const float FREE_FALL_TIME = 0.1f;
+    public const float FREE_FALL_TIME = 1f;
 
     public const int MAIN_FIELD_CELL_W = 16;
     public const int MAIN_FIELD_CELL_H = 26;
@@ -209,6 +209,7 @@ static class D
     
     public static float SCRN_OUT_POS = -16f;
 
+    public static float FIX_MARGIN = 0.5f;
 
 
 }

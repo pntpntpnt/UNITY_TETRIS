@@ -90,6 +90,9 @@ public class main : MonoBehaviour
     bool ren;
     int renCnt;
 
+    byte actCnt = 0;
+    bool fixTimerSetDone = false;
+    int maxY = D.INIT_POS_Y;
 
 
     D.ST[] blkOrderAry = new D.ST[D.BLOCK_NUM + D.BLOCK_NUM] {
@@ -235,7 +238,7 @@ void delLineCntr() {
         delLineCnt = 999;
     }
 
-    Debug.Log(delLineCnt);
+    // Debug.Log(delLineCnt);
 
 
     switch (delLineCnt % 10)
@@ -416,6 +419,11 @@ void holdBlk() {
     if (gameOver) {
         return;
     }
+    
+    
+    fixTimerSetDone = false;
+    CancelInvoke();
+    actCnt = 0;
 
 
 
@@ -444,6 +452,7 @@ void holdBlk() {
 
         blkX = D.INIT_POS_X;
         blkY = D.INIT_POS_Y;
+        maxY = blkY;
 
         if (ablePutBlk()) {
             putBlk();
@@ -490,6 +499,7 @@ void holdBlk() {
 
         blkX = D.INIT_POS_X;
         blkY = D.INIT_POS_Y;
+        maxY = blkY;
 
 
 
@@ -652,6 +662,8 @@ void rstBlk() {
 
     blkX = D.INIT_POS_X;
     blkY = D.INIT_POS_Y;
+    maxY = blkY;
+
 
     changeBlkShp();
 
@@ -739,13 +751,13 @@ bool checkGnd() {
     for (int y = 0; y < D.BLOCK_CELL_LEN; y++) {
         for (int x = 0; x < D.BLOCK_CELL_LEN; x++) {
             if (blkShp[y, x] != D.ST.NON) {
-                if (mainFldAry[blkY + y, blkX + x] == D.ST.FIX) {
-                    return false;
+                if (mainFldAry[blkY + y + 1, blkX + x] == D.ST.FIX) {
+                    return true;
                 }
             }
         }
     }
-    return true;
+    return false;
 }
 
 bool mvBlk(int dx, int dy) {
@@ -938,15 +950,39 @@ void Update()
             rstClickCnt++;
             restart();
         }
+        fixTimerSetDone = false;
+        CancelInvoke();
+        Invoke("fixDelRstBlk", D.FIX_MARGIN);
+        actCnt = 0;
         return;
     }
 
+
+    // if (checkGnd()) {
+    //     if (!fixTimerSetDone) {
+    //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
+    //         fixTimerSetDone = true;
+    //     }
+    // }
+
+
     freeFallTimer += Time.deltaTime;
     if (freeFallTimer > D.FREE_FALL_TIME){
+        // if (mvBlk(0, 1)) {
+        //     // Debug.Log(maxY);
+        //     // Debug.Log(blkY);
+
+        //     if (blkY > maxY) {
+        //         maxY = blkY;
+        //         fixTimerSetDone = true;
+        //         CancelInvoke();
+        //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
+        //         actCnt = 0;
+        //     }
+        // }
         if (!mvBlk(0, 1)) {
             fixDelRstBlk();
                 // Invoke("fixDelRstBlk", 0.5f);
-
         }
         freeFallTimer = 0f;
     }
@@ -979,14 +1015,22 @@ void Update()
         if (touch && ableMove && !hardDrop) {
             touch = false;
             if (rotBlk()) {
-             
+                // actCnt++;
+                // // Debug.Log(actCnt);
+                // CancelInvoke();
+                // Invoke("fixDelRstBlk", D.FIX_MARGIN);
 
+                // fixTimerSetDone = true;
 
+                // if (actCnt >= 15 && checkGnd()) {
+                //     actCnt = 0;
+                //     fixDelRstBlk();
+                // }
             }
         }
 
 
-        if (y1 - y0 > swipeThr && ableMove) {
+        if (y1 - y0 > swipeThr && ableMove) { // --- HARD DROP ---
             x0 = x1;
             y0 = y1;
             hardDrop = true;
@@ -1016,12 +1060,33 @@ void Update()
         x0 = x1;
         y0 = y1;
         if (mvBlk(1, 0)) {
+            // actCnt++;
+            // // Debug.Log(actCnt);
+            // CancelInvoke();
+            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
+
+            // fixTimerSetDone = true;
+            // if (actCnt >= 15 && checkGnd()) {
+            //     actCnt = 0;
+            //     fixDelRstBlk();
+            // }
         }
     }
     else if (x0 - x1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
         x0 = x1;
         y0 = y1;
         if (mvBlk(-1, 0)) {
+            // actCnt++;
+            // // Debug.Log(actCnt);
+            // CancelInvoke();
+            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
+
+            // fixTimerSetDone = true;
+            // if (actCnt >= 15 && checkGnd()) {
+            //     actCnt = 0;
+            //     fixDelRstBlk();
+
+            // }
         }
     }
     else if (y0 - y1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
@@ -1034,6 +1099,16 @@ void Update()
                 fixDelRstBlk();
             }
         }
+        // else {
+        //     if (blkY > maxY) {
+        //         maxY = blkY;
+        //         fixTimerSetDone = true;
+        //         CancelInvoke();
+        //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
+
+        //         actCnt = 0;
+        //     }
+        // }
         freeFallTimer = 0f;
    }
 
