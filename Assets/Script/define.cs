@@ -23,7 +23,8 @@ static class D
         SSS,
         TTT,
         ZZZ,
-        FIX
+        FIX,
+        OJM
     }
 
     public enum ROT_ST {
@@ -212,6 +213,7 @@ static class D
     public static float SCRN_OUT_POS = -16f;
 
     public static float FIX_MARGIN = 0.5f;
+
 
 
 }

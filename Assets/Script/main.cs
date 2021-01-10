@@ -27,6 +27,9 @@ public class main : MonoBehaviour
     SpriteRenderer sR;
     Vector2 pos;
 
+    byte ojmGenTiming = 10;
+    byte ojmGenCnt = 0;
+
     public GameObject numW1_0;
     public GameObject numW2_0;
     public GameObject numW3_0;
@@ -50,6 +53,14 @@ public class main : MonoBehaviour
     public GameObject numH2_2;
     public GameObject numH3_2;
     public GameObject numH4_2;
+
+    public GameObject numW1_3;
+    public GameObject numW2_3;
+    public GameObject numW3_3;
+    public GameObject numH1_3;
+    public GameObject numH2_3;
+    public GameObject numH3_3;
+    public GameObject numH4_3;
 
     float swipeThr = (float) Screen.width * 0.05f;
     float touchThr = (float) Screen.width * 0.01f;
@@ -121,6 +132,8 @@ public class main : MonoBehaviour
     D.ROT_ST rotSt;
     D.ST[,] blkShp = new D.ST[D.BLOCK_CELL_LEN, D.BLOCK_CELL_LEN];
 
+    int ojmScoreThr = 100;
+    int ojmScoreThrCoe = 1;
 
 void Start()
 {
@@ -222,29 +235,36 @@ void Start()
 
 
 
+
 }
 
 void calcScore(int basicScore) {
 
 
-    if (tSpin != combo) tSpin = 1;
     if (combo == 4) combo = 8;
     score += basicScore;
     score += hardDropScore;
-    score += combo * (tSpin * tSpin) * (ren * ren);
+    score += combo * (ren * ren);
+
+
+    if (ojmScoreThr * ojmScoreThrCoe <= score) {
+        addLine(UnityEngine.Random.Range(D.BLOCK_CELL_LEN - 1, D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1));
+        ojmScoreThrCoe = (int) (score / ojmScoreThr) + 1;
+    }
+
 
     tSpin = 1;
     hardDropScore = 0;
 
-    Debug.Log("score : " + score);
+    // Debug.Log("score : " + score);
 
     Color c;
     if (combo == 8) {
         c = new Color(0.239f, 0.957f, 0.957f);
     }
-    else if (tSpin >= 2) {
-        c = new Color(0.957f, 0.239f, 0.957f);
-    }
+    // else if (tSpin >= 2) {
+    //     c = new Color(0.957f, 0.239f, 0.957f);
+    // }
     else if (ren >= 2) {
         c = new Color(0.957f, 0.957f, 0.239f);
     }
@@ -272,27 +292,21 @@ void calcScore(int basicScore) {
     numW1_2.GetComponent<SpriteRenderer>().color = c;
     numW2_2.GetComponent<SpriteRenderer>().color = c;
     numW3_2.GetComponent<SpriteRenderer>().color = c;
+    numH1_3.GetComponent<SpriteRenderer>().color = c;
+    numH2_3.GetComponent<SpriteRenderer>().color = c;
+    numH3_3.GetComponent<SpriteRenderer>().color = c;
+    numH4_3.GetComponent<SpriteRenderer>().color = c;
+    numW1_3.GetComponent<SpriteRenderer>().color = c;
+    numW2_3.GetComponent<SpriteRenderer>().color = c;
+    numW3_3.GetComponent<SpriteRenderer>().color = c;
 
 
-    if (score > 999) {
-        score = 999;
+    if (score > 9999) {
+        score = 9999;
     }
 
-    if (score == 999) {
-        freeFallTime = 0.1f;
-    }
-    else if (score > 700) {
-        freeFallTime = 0.3f;
-    }
-
-    else if (score > 500) {
-        freeFallTime = 0.5f;
-    }
-
-    else if (score > 300) {
-        freeFallTime = 0.7f;
-    }
-
+    freeFallTime = 1.0f - (float) score * 0.00033f;
+    if (freeFallTime <= 0.01) freeFallTime = 0.01f;
 
     switch (score % 10)
     {
@@ -360,7 +374,7 @@ void calcScore(int basicScore) {
             numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
             numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
     }
-    switch ((int) (score / 100))
+    switch ((int) ((score % 1000) / 100))
     {
         case 0:
             numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(true); numH4_2.SetActive(true);
@@ -392,6 +406,39 @@ void calcScore(int basicScore) {
         case 9:
             numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(false); numH4_2.SetActive(true);
             numW1_2.SetActive(true); numW2_2.SetActive(true); numW3_2.SetActive(true); break;
+    }
+    switch ((int) (score / 1000))
+    {
+        case 0:
+            numH1_3.SetActive(true); numH2_3.SetActive(true); numH3_3.SetActive(true); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(false); numW3_3.SetActive(true); break;
+        case 1:
+            numH1_3.SetActive(false); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(false); numW2_3.SetActive(false); numW3_3.SetActive(false); break;
+        case 2:
+            numH1_3.SetActive(false); numH2_3.SetActive(true); numH3_3.SetActive(true); numH4_3.SetActive(false);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
+        case 3:
+            numH1_3.SetActive(false); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
+        case 4:
+            numH1_3.SetActive(true); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(false); numW2_3.SetActive(true); numW3_3.SetActive(false); break;
+        case 5:
+            numH1_3.SetActive(true); numH2_3.SetActive(false); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
+        case 6:
+            numH1_3.SetActive(true); numH2_3.SetActive(false); numH3_3.SetActive(true); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
+        case 7:
+            numH1_3.SetActive(false); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(false); numW3_3.SetActive(false); break;
+        case 8:
+            numH1_3.SetActive(true); numH2_3.SetActive(true); numH3_3.SetActive(true); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
+        case 9:
+            numH1_3.SetActive(true); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
+            numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
     }
 
 }
@@ -445,6 +492,8 @@ void restart() {
     ren = 0;
     tSpin = 1;
     hardDropScore = 0;
+
+    ojmGenCnt = 0;
 
     calcScore(0);
 
@@ -851,71 +900,51 @@ bool checkLine(int y) {
     return true;
 }
 
-void delLine(int y) {
+void delLine() {
     
+    combo = 0;
+    for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
+        if (checkLine(y)) {
+            // Debug.Log("delLine : " + y);
+            combo++;
+            for (int yy = y; yy >= D.BLOCK_CELL_LEN; yy--) {
 
-    while (true) {
-        for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
-            mainFldAry[y, x] = mainFldAry[y - 1, x];
-            mainFldGui[y, x].colorF(mainFldGui[y - 1, x].getColorId());
-
-
-        }
-        
-        y--;
-
-        if (y == D.BLOCK_CELL_LEN - 1) {
-            for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
-            mainFldAry[y, x] = D.ST.NON;
-            mainFldGui[y, x].color(mainFldAry[y, x]);
+                for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+                    mainFldAry[yy, x] = mainFldAry[yy - 1, x];
+                    mainFldGui[yy, x].colorF(mainFldGui[yy - 1, x].getColorId());
+                }
             }
-            return;
+            y++;
         }
     }
+    
+    
+    if (combo > 0) {
+        ren++;
+        ojmGenCnt = 0;
+    } else {
+        ren = 0;
+        ojmGenCnt++;
+    }
+    
 }
 
 
-void addline() {
+void addLine(int rmX) {
 
-    //  D.ST[,] tmp = new D.ST[D.MAIN_FIELD_CELL_H, D.MAIN_FIELD_CELL_W];
-    
-    //  Array.Copy(mainFldAry, tmp, mainFldAry.Length);
+    for (int y = D.BLOCK_CELL_LEN - 1; y < D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1 - 1; y++) {
+        for (int x = D.BLOCK_CELL_LEN - 1; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+            mainFldGui[y, x].colorF(mainFldGui[y + 1, x].getColorId());
+            mainFldAry[y, x] = mainFldAry[y + 1, x];
+        }
+    }
+    for (int x = D.BLOCK_CELL_LEN - 1; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
+        mainFldAry[D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN, x] = D.ST.FIX;
+        mainFldGui[D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN, x].color(D.ST.FIX);                
+    }
+    mainFldAry[D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN, rmX] = D.ST.NON;
+    mainFldGui[D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN, rmX].color(D.ST.NON);                
 
-
-    // int tmp = 3;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 4;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 5;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 6;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 7;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 8;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 9;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 10;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // tmp = 11;
-    // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-    // // tmp = 12;
-    // // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
-
-    // mainFldAry.SetValue(mainFldAry[4, 12], 3, 12); 
-    // mainFldAry.SetValue(mainFldAry[5, 12], 4, 12); 
-    // mainFldAry.SetValue(mainFldAry[6, 12], 5, 12); 
-    // mainFldAry.SetValue(mainFldAry[7, 12], 6, 12); 
-
-    // for (int y = D.BLOCK_CELL_LEN - 1; y < D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1; y++) {
-    //     for (int x = D.BLOCK_CELL_LEN - 1; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1 - 1; x++) {
-    //             mainFldAry.SetValue(mainFldAry[y + 1, x], y, x);
-    //         mainFldGui[y, x].color(mainFldAry[y, x]);
-    //     }
-    // }
-
-    
 
    
 }
@@ -924,30 +953,17 @@ void fixDelRstBlk() {
 
     fixBlk();
 
+    delLine();
 
-    combo = 0;
-    for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
-        if (checkLine(y)) {
-            delLine(y);
-            y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
-            combo++;
-            // score++;
-        }
+    
+
+
+    calcScore(1);    
+
+    if (ojmGenCnt >= ojmGenTiming) {
+        ojmGenCnt = 0;
+        addLine(UnityEngine.Random.Range(D.BLOCK_CELL_LEN - 1, D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1));
     }
-    if (combo > 0) {
-        ren++;
-    } else {
-        ren = 0;
-    }
-
-
-    calcScore(1);
-
-
-
-
-    // addline();
-
 
     rstBlk();
 
@@ -1045,80 +1061,80 @@ bool rotBlk(bool right = true) {
         if (right) {
             switch (rotSt) {
                 case D.ROT_ST.A:
-                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; 
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
-                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
-                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false; tSpin = 1;}
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     break;
                 case D.ROT_ST.B:
-                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
-                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false; tSpin = 1;}
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
                     break;
                 case D.ROT_ST.C:
-                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
-                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
-                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false; tSpin = 1;}
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     break;
                 case D.ROT_ST.D:
-                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
-                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false; tSpin = 1;}
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
                     break;
             }
         } else {
             ///
             switch (rotSt) {
                 case D.ROT_ST.A:
-                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
-                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false; tSpin = 1;}
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
                     break;
                 case D.ROT_ST.B:
-                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
-                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
-                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false; tSpin = 1;}
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     break;
                 case D.ROT_ST.C:
-                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
-                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false; tSpin = 1;}
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
                     break;
                 case D.ROT_ST.D:
-                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
-                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
-                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false; tSpin = 1;}
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
                     break;
             }
             ///
@@ -1150,6 +1166,7 @@ static D.ST[] shuffleAry(D.ST[] ary) {
 // Update is called once per frame
 void Update()
 {
+
 
     if (gameOver) {
         if (Input.GetMouseButtonDown(0)) {
