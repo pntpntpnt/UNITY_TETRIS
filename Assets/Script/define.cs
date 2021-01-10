@@ -4,12 +4,14 @@ using UnityEngine;
 
 static class D
 {
-    public const float FREE_FALL_TIME = 0.5f;
+    // public const float FREE_FALL_TIME = 0.5f;
 
     public const int MAIN_FIELD_CELL_W = 16;
     public const int MAIN_FIELD_CELL_H = 26;
 
     public const int BLOCK_CELL_LEN = 4;
+
+    public const float MAIN_FLD_GUI_MARGIN = 2;
 
     public enum ST {
         NON,
@@ -197,15 +199,15 @@ static class D
     {ST.NON, ST.NON, ST.NON, ST.NON}};
 
 
-    public static float HOLD_X_POS = -7.25f;
-    public static float HOLD_Y_POS = 9.5f;
+    public static float HOLD_X_POS = -6f;
+    public static float HOLD_Y_POS = 11f;
 
-    public static float NEXT_X_POS = 7.25f;
-    public static float NEXT_Y_POS = 9.5f;
+    public static float NEXT_X_POS = 6f;
+    public static float NEXT_Y_POS = 11f;
 
-    public static float NEXT_2_Y_POS = 5.5f;
+    public static float NEXT_2_Y_POS = 8f;
     
-    public static float NEXT_3_Y_POS = 1.5f;
+    public static float NEXT_3_Y_POS = 5f;
     
     public static float SCRN_OUT_POS = -16f;
 

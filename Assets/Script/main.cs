@@ -22,7 +22,6 @@ public class main : MonoBehaviour
     GameObject i3, j3, l3, o3, s3, t3, z3;
     GameObject ih, jh, lh, oh, sh, th, zh;
 
-    int delLineCnt;
 
     GameObject gO;
     SpriteRenderer sR;
@@ -71,7 +70,8 @@ public class main : MonoBehaviour
     double x0, y0, x1, y1;
 
     float freeFallTimer = 0f;
-    
+    float freeFallTime = 1.0f;
+
     bool touch;
 
 
@@ -82,9 +82,12 @@ public class main : MonoBehaviour
     byte fixCnt;
     bool ableMove;
 
-    int combo;
-    bool ren;
-    int renCnt;
+    int score = 0;
+    int combo = 0;
+    int ren = 0;
+    int tSpin = 1;
+    int hardDropScore = 0;
+    int scoreUpCnt = 0;
 
     byte actCnt = 0;
     bool fixTimerSetDone = false;
@@ -137,28 +140,28 @@ void Start()
             } else {
                 mainFldAry[y, x] = D.ST.NON; 
                 pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
-                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y + D.MAIN_FLD_GUI_MARGIN;
                 sR.transform.position = pos;
             }
 
             mainFldGui[y, x] = new Cell(sR);
             mainFldGui[y, x].color(mainFldAry[y, x]);
 
-            if (x == D.BLOCK_CELL_LEN - 2 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
-                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
-                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
-                sR.transform.position = pos;
-            }
-            if (x == D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
-                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
-                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
-                sR.transform.position = pos;
-            }
-            if (y == D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1 && x >= D.BLOCK_CELL_LEN - 2 && x <= D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1) {
-                pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
-                pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
-                sR.transform.position = pos;
-            }
+            // if (x == D.BLOCK_CELL_LEN - 2 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
+            //     pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+            //     pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+            //     sR.transform.position = pos;
+            // }
+            // if (x == D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1 && y >= D.BLOCK_CELL_LEN - 1 && y <= D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN) {
+            //     pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+            //     pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+            //     sR.transform.position = pos;
+            // }
+            // if (y == D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1 && x >= D.BLOCK_CELL_LEN - 2 && x <= D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1) {
+            //     pos.x = x - (float) (D.MAIN_FIELD_CELL_W * 0.5 - 0.5);
+            //     pos.y = (float) (D.MAIN_FIELD_CELL_H * 0.5 - 0.5) - y;
+            //     sR.transform.position = pos;
+            // }
 
 
   
@@ -213,27 +216,85 @@ void Start()
     numW2_1.SetActive(false);
     numW2_2.SetActive(false);
 
-    ren = false;
-    renCnt = 1;
+    ren = 0;
 
+    score = 0;
 
 
 
 }
 
-void delLineCntr() {
+void calcScore(int basicScore) {
 
- 
-    delLineCnt = delLineCnt + 1;
- 
-    if (delLineCnt > 999) {
-        delLineCnt = 999;
+
+    if (tSpin != combo) tSpin = 1;
+    if (combo == 4) combo = 8;
+    score += basicScore;
+    score += hardDropScore;
+    score += combo * (tSpin * tSpin) * (ren * ren);
+
+    tSpin = 1;
+    hardDropScore = 0;
+
+    Debug.Log("score : " + score);
+
+    Color c;
+    if (combo == 8) {
+        c = new Color(0.239f, 0.957f, 0.957f);
+    }
+    else if (tSpin >= 2) {
+        c = new Color(0.957f, 0.239f, 0.957f);
+    }
+    else if (ren >= 2) {
+        c = new Color(0.957f, 0.957f, 0.239f);
+    }
+    else {
+        c = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+    }
+    numH1_0.GetComponent<SpriteRenderer>().color = c;
+    numH2_0.GetComponent<SpriteRenderer>().color = c;
+    numH3_0.GetComponent<SpriteRenderer>().color = c;
+    numH4_0.GetComponent<SpriteRenderer>().color = c;
+    numW1_0.GetComponent<SpriteRenderer>().color = c;
+    numW2_0.GetComponent<SpriteRenderer>().color = c;
+    numW3_0.GetComponent<SpriteRenderer>().color = c;
+    numH1_1.GetComponent<SpriteRenderer>().color = c;
+    numH2_1.GetComponent<SpriteRenderer>().color = c;
+    numH3_1.GetComponent<SpriteRenderer>().color = c;
+    numH4_1.GetComponent<SpriteRenderer>().color = c;
+    numW1_1.GetComponent<SpriteRenderer>().color = c;
+    numW2_1.GetComponent<SpriteRenderer>().color = c;
+    numW3_1.GetComponent<SpriteRenderer>().color = c;
+    numH1_2.GetComponent<SpriteRenderer>().color = c;
+    numH2_2.GetComponent<SpriteRenderer>().color = c;
+    numH3_2.GetComponent<SpriteRenderer>().color = c;
+    numH4_2.GetComponent<SpriteRenderer>().color = c;
+    numW1_2.GetComponent<SpriteRenderer>().color = c;
+    numW2_2.GetComponent<SpriteRenderer>().color = c;
+    numW3_2.GetComponent<SpriteRenderer>().color = c;
+
+
+    if (score > 999) {
+        score = 999;
     }
 
-    // Debug.Log(delLineCnt);
+    if (score == 999) {
+        freeFallTime = 0.1f;
+    }
+    else if (score > 700) {
+        freeFallTime = 0.3f;
+    }
+
+    else if (score > 500) {
+        freeFallTime = 0.5f;
+    }
+
+    else if (score > 300) {
+        freeFallTime = 0.7f;
+    }
 
 
-    switch (delLineCnt % 10)
+    switch (score % 10)
     {
         case 0:
             numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(true); numH4_0.SetActive(true);
@@ -266,7 +327,7 @@ void delLineCntr() {
             numH1_0.SetActive(true); numH2_0.SetActive(true); numH3_0.SetActive(false); numH4_0.SetActive(true);
             numW1_0.SetActive(true); numW2_0.SetActive(true); numW3_0.SetActive(true); break;
     }
-    switch ((int) (delLineCnt / 10))
+    switch ((int) ((score % 100) / 10))
     {
         case 0:
             numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(true); numH4_1.SetActive(true);
@@ -299,7 +360,7 @@ void delLineCntr() {
             numH1_1.SetActive(true); numH2_1.SetActive(true); numH3_1.SetActive(false); numH4_1.SetActive(true);
             numW1_1.SetActive(true); numW2_1.SetActive(true); numW3_1.SetActive(true); break;
     }
-    switch ((int) (delLineCnt / 100))
+    switch ((int) (score / 100))
     {
         case 0:
             numH1_2.SetActive(true); numH2_2.SetActive(true); numH3_2.SetActive(true); numH4_2.SetActive(true);
@@ -378,12 +439,14 @@ void restart() {
     zh.transform.position = pos;
 
 
-    delLineCnt = -1;
-    delLineCntr();
-
-    ableMove = false;
-
+    score = 0;
+    freeFallTime = 1.0f;
     combo = 0;
+    ren = 0;
+    tSpin = 1;
+    hardDropScore = 0;
+
+    calcScore(0);
 
 }
 
@@ -402,6 +465,7 @@ void init() {
 
     changeBlkShp();
     putBlk();
+    calcScore(0);
 
 
 }
@@ -794,10 +858,7 @@ void delLine(int y) {
         for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
             mainFldAry[y, x] = mainFldAry[y - 1, x];
             mainFldGui[y, x].colorF(mainFldGui[y - 1, x].getColorId());
-            //.colorF(mainFldAry[y, x]);
-            // mainFldAry[y, x] = D.ST.SSS;        
-            // mainFldGui[y, x].color(mainFldAry[y, x]);
-            // Debug.Log(mainFldAry);
+
 
         }
         
@@ -807,8 +868,6 @@ void delLine(int y) {
             for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
             mainFldAry[y, x] = D.ST.NON;
             mainFldGui[y, x].color(mainFldAry[y, x]);
-            // mai nFldAry[y, x] = mainFldAry[y, x];        
-            // mainFldGui[y, x].color(mainFldAry[y, x]);
             }
             return;
         }
@@ -822,11 +881,6 @@ void addline() {
     
     //  Array.Copy(mainFldAry, tmp, mainFldAry.Length);
 
-    // Debug.Log("add");
-
-    // Debug.Log(mainFldAry[22, 3] + ", " + mainFldAry[23, 3]);// + ", " + tmp[22, 3] + ", " + tmp[23, 3]);
-
-    // Debug.Log(mainFldAry[22, 12]);
 
     // int tmp = 3;
     // mainFldAry.SetValue(mainFldAry[3, tmp], 2, tmp); mainFldAry.SetValue(mainFldAry[4, tmp], 3, tmp); mainFldAry.SetValue(mainFldAry[5, tmp], 4, tmp); mainFldAry.SetValue(mainFldAry[6, tmp], 5, tmp); mainFldAry.SetValue(mainFldAry[7, tmp], 6, tmp); mainFldAry.SetValue(mainFldAry[8, tmp], 7, tmp); mainFldAry.SetValue(mainFldAry[9, tmp], 8, tmp); mainFldAry.SetValue(mainFldAry[10, tmp], 9, tmp); mainFldAry.SetValue(mainFldAry[11, tmp], 10, tmp); mainFldAry.SetValue(mainFldAry[12, tmp], 11, tmp); mainFldAry.SetValue(mainFldAry[13, tmp], 12, tmp); mainFldAry.SetValue(mainFldAry[14, tmp], 13, tmp); mainFldAry.SetValue(mainFldAry[15, tmp], 14, tmp); mainFldAry.SetValue(mainFldAry[16, tmp], 15, tmp); mainFldAry.SetValue(mainFldAry[17, tmp], 16, tmp); mainFldAry.SetValue(mainFldAry[18, tmp], 17, tmp); mainFldAry.SetValue(mainFldAry[19, tmp], 18, tmp); mainFldAry.SetValue(mainFldAry[20, tmp], 19, tmp); mainFldAry.SetValue(mainFldAry[21, tmp], 20, tmp); mainFldAry.SetValue(mainFldAry[22, tmp], 21, tmp); mainFldAry.SetValue(mainFldAry[23, tmp], 22, tmp);
@@ -861,10 +915,7 @@ void addline() {
     //     }
     // }
 
-    // Debug.Log(mainFldAry[22, 12]);
-
-    // Debug.Log(mainFldAry[22, 3] + ", " + mainFldAry[23, 3]);// + ", " + tmp[22, 3] + ", " + tmp[23, 3]);
-
+    
 
    
 }
@@ -874,109 +925,203 @@ void fixDelRstBlk() {
     fixBlk();
 
 
+    combo = 0;
     for (int y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN; y >= D.BLOCK_CELL_LEN - 1; y--) {
         if (checkLine(y)) {
             delLine(y);
-            delLineCntr();
             y = D.MAIN_FIELD_CELL_H - D.BLOCK_CELL_LEN + 1;
+            combo++;
+            // score++;
         }
+    }
+    if (combo > 0) {
+        ren++;
+    } else {
+        ren = 0;
     }
 
 
+    calcScore(1);
 
-    // Debug.Log(mainFldAry[22, 12]);
+
+
 
     // addline();
-    // Debug.Log(mainFldAry[22, 12]);
 
 
     rstBlk();
 
 }
 
-bool rotBlk() {
+bool rotBlk(bool right = true) {
 
     bool success = true;
     delBlk();
+    
 
 
     if (blkIndex == D.ST.III) {
-        switch (rotSt) {
-            case D.ROT_ST.A:
-                blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
-                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 0;}
-                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 1;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 3;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
-                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
-                break;
-            case D.ROT_ST.B:
-                blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 2;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 3;}
-                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY - 1;
-                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
-                break;
-            case D.ROT_ST.C:
-                blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
-                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 0;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 1;}
-                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 3;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
-                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
-                break;
-            case D.ROT_ST.D:
-                blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
-                if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 2;}
-                if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 3;}
-                if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 1;
-                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
-                break;
+        if (right) {
+            switch (rotSt) {
+                case D.ROT_ST.A:
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
+                    if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
+                    break;
+                case D.ROT_ST.B:
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 2;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY - 1;
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
+                    break;
+                case D.ROT_ST.C:
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
+                    if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
+                    break;
+                case D.ROT_ST.D:
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
+                    if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 2;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 1;
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
+                    break;
+            }
+        }
+        else {
+            switch (rotSt) {
+                case D.ROT_ST.A:
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 2;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 2; blkY = blkY - 1;
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
+                    break;
+                case D.ROT_ST.B:
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
+                    if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
+                    break;
+                case D.ROT_ST.C:
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 2;}
+                    if (!ablePutBlk()) {blkX = blkX + 2; blkY = blkY - 3;
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
+                    break;
+                case D.ROT_ST.D:
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 3; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 3; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
+                    break;
+            }
         }
     } else {
-        switch (rotSt) {
-            case D.ROT_ST.A:
-                blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
-                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
-                break;
-            case D.ROT_ST.B:
-                blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
-                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
-                break;
-            case D.ROT_ST.C:
-                blkShp = blk.shp.D; rotSt = D.ROT_ST.D;
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
-                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
-                break;
-            case D.ROT_ST.D:
-                blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
-                if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
-                if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
-                if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
-                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
-                break;
+        if (right) {
+            switch (rotSt) {
+                case D.ROT_ST.A:
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.B:
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.C:
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.D:
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false; tSpin = 1;}
+                    break;
+            }
+        } else {
+            ///
+            switch (rotSt) {
+                case D.ROT_ST.A:
+                    blkShp = blk.shp.D; rotSt = D.ROT_ST.D; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.B:
+                    blkShp = blk.shp.A; rotSt = D.ROT_ST.A; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.C:
+                    blkShp = blk.shp.B; rotSt = D.ROT_ST.B; if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false; tSpin = 1;}
+                    break;
+                case D.ROT_ST.D:
+                    blkShp = blk.shp.C; rotSt = D.ROT_ST.C; if (blkIndex == D.ST.TTT) {tSpin = 2;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false; tSpin = 1;}
+                    break;
+            }
+            ///
         }
     }
 
@@ -1035,7 +1180,6 @@ void Update()
         }
         if (!fixTimerSetDone) {
             CancelInvoke();
-            // Debug.Log("timer set");
             Invoke("fixDelRstBlk", D.FIX_MARGIN);
             fixTimerSetDone = true;
         }
@@ -1044,24 +1188,8 @@ void Update()
 
 
     freeFallTimer += Time.deltaTime;
-    if (freeFallTimer > D.FREE_FALL_TIME){
+    if (freeFallTimer > freeFallTime){
         mvBlk(0, 1);
-        // if (mvBlk(0, 1)) {
-        //     // Debug.Log(maxY);
-        //     // Debug.Log(blkY);
-
-        //     if (blkY > maxY) {
-        //         maxY = blkY;
-        //         fixTimerSetDone = true;
-        //         CancelInvoke();
-        //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
-        //         actCnt = 0;
-        //     }
-        // }
-        // if (!mvBlk(0, 1)) {
-            // fixDelRstBlk();
-                // Invoke("fixDelRstBlk", 0.5f);
-        // }
         if (blkY > maxY) {
             maxY = blkY;
             actCnt = 0;
@@ -1081,11 +1209,18 @@ void Update()
         y1 = y0;
 
 
-        if ( x0 < Screen.width * 0.2) {
-            // Debug.Log("hello");
+        if (x0 < Screen.width * 0.1) {
             holdBlk();
             touch = false;
             return;
+        }
+        else if (y0 < Screen.height * 0.1) {
+            scoreUpCnt++;
+            if (scoreUpCnt >= 5) {
+                scoreUpCnt = 0;
+                score += 200;
+                calcScore(0);
+            }
         }
 
         touch = true;
@@ -1097,7 +1232,11 @@ void Update()
 
         if (touch && ableMove && !hardDrop) {
             touch = false;
-            if (rotBlk()) {
+
+            bool right = true;
+            if (x0 < Screen.width * 0.5) right = false;
+        
+            if (rotBlk(right)) {
 
                 actCnt++;
                 if (actCnt >= 15) speedFix = true;
@@ -1106,7 +1245,6 @@ void Update()
                 if (fixTimerSetDone) {
                     CancelInvoke();
                     fixTimerSetDone = false;
-                    // Debug.Log("cancel");
                 }
 
                 if (blkY > maxY) {
@@ -1115,17 +1253,6 @@ void Update()
                     speedFix = false;
                 }
 
-                // actCnt++;
-                // // Debug.Log(actCnt);
-                // CancelInvoke();
-                // Invoke("fixDelRstBlk", D.FIX_MARGIN);
-
-                // fixTimerSetDone = true;
-
-                // if (actCnt >= 15 && checkGnd()) {
-                //     actCnt = 0;
-                //     fixDelRstBlk();
-                // }
             }
         }
 
@@ -1136,6 +1263,7 @@ void Update()
             hardDrop = true;
             for (int i = 0; i < D.MAIN_FIELD_CELL_H; i++) {
                 if (!mvBlk(0, 1)) {
+                    hardDropScore = 1;
                     fixDelRstBlk();
                     freeFallTimer = 0f;
                     hardDrop = false;
@@ -1168,22 +1296,9 @@ void Update()
             if (fixTimerSetDone) {
                 CancelInvoke();
                 fixTimerSetDone = false;
-                // Debug.Log("cancel");
 
             }
     
-            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
-
-            // actCnt++;
-            // // Debug.Log(actCnt);
-            // CancelInvoke();
-            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
-
-            // fixTimerSetDone = true;
-            // if (actCnt >= 15 && checkGnd()) {
-            //     actCnt = 0;
-            //     fixDelRstBlk();
-            // }
         }
     }
     else if (x0 - x1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
@@ -1196,21 +1311,8 @@ void Update()
             if (fixTimerSetDone) {
                 CancelInvoke();
                 fixTimerSetDone = false;
-                // Debug.Log("cancel");
 
             }
-
-            // actCnt++;
-            // // Debug.Log(actCnt);
-            // CancelInvoke();
-            // Invoke("fixDelRstBlk", D.FIX_MARGIN);
-
-            // fixTimerSetDone = true;
-            // if (actCnt >= 15 && checkGnd()) {
-            //     actCnt = 0;
-            //     fixDelRstBlk();
-
-            // }
         }
     }
     else if (y0 - y1 > swipeThr && y1 - y0 < swipeThr && ableMove) {
@@ -1231,16 +1333,6 @@ void Update()
            }
         }
          
-        // else {
-        //     if (blkY > maxY) {
-        //         maxY = blkY;
-        //         fixTimerSetDone = true;
-        //         CancelInvoke();
-        //         Invoke("fixDelRstBlk", D.FIX_MARGIN);
-
-        //         actCnt = 0;
-        //     }
-        // }
         freeFallTimer = 0f;
    }
 

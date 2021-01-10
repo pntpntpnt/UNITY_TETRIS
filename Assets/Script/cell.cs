@@ -13,7 +13,7 @@ public class Cell {
   internal void color(D.ST st) {
     switch (st)
     {
-      case D.ST.NON: sR.color = new Color(0.6f, 0.6f, 0.6f, 1.0f); id = st;
+      case D.ST.NON: sR.color = new Color(0.5f, 0.5f, 0.5f, 1.0f); id = st;
         break;
       case D.ST.III: sR.color = new Color(0.239f, 0.957f, 0.957f); id = st; // 61, 244, 244
         break;
@@ -36,7 +36,7 @@ public class Cell {
   internal void colorF(D.ST st) {
     switch (st)
     {
-      case D.ST.NON: sR.color = new Color(0.6f, 0.6f, 0.6f, 1.0f); id = st;
+      case D.ST.NON: sR.color = new Color(0.5f, 0.5f, 0.5f, 1.0f); id = st;
         break;
       case D.ST.III: sR.color = new Color(0.020f, 0.376f, 0.376f); id = st; // 5, 96, 96
         break;
@@ -59,7 +59,7 @@ public class Cell {
   internal void colorG(D.ST st) {
     switch (st)
     {
-      case D.ST.NON: sR.color = new Color(0.6f, 0.6f, 0.6f, 1.0f); id = st;
+      case D.ST.NON: sR.color = new Color(0.5f, 0.5f, 0.5f, 1.0f); id = st;
         break;
       case D.ST.III: sR.color = new Color(0.620f, 0.976f, 0.976f); id = st; // 158, 249, 249
         break;
