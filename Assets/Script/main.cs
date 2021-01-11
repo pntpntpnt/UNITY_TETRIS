@@ -99,6 +99,7 @@ public class main : MonoBehaviour
     int tSpin = 1;
     int hardDropScore = 0;
     int scoreUpCnt = 0;
+    int cheat;
 
     byte actCnt = 0;
     bool fixTimerSetDone = false;
@@ -233,8 +234,7 @@ void Start()
 
     score = 0;
 
-
-
+    tSpin = 1;
 
 }
 
@@ -242,9 +242,13 @@ void calcScore(int basicScore) {
 
 
     if (combo == 4) combo = 8;
+
+
+    score += cheat;
+    cheat = 0;
     score += basicScore;
     score += hardDropScore;
-    score += combo * (ren * ren);
+    score += combo * tSpin * tSpin + combo * ren * ren;
 
 
     if (ojmScoreThr * ojmScoreThrCoe <= score) {
@@ -253,7 +257,6 @@ void calcScore(int basicScore) {
     }
 
 
-    tSpin = 1;
     hardDropScore = 0;
 
     // Debug.Log("score : " + score);
@@ -262,10 +265,10 @@ void calcScore(int basicScore) {
     if (combo == 8) {
         c = new Color(0.239f, 0.957f, 0.957f);
     }
-    // else if (tSpin >= 2) {
-    //     c = new Color(0.957f, 0.239f, 0.957f);
-    // }
-    else if (ren >= 2) {
+    else if (tSpin >= 2) {
+        c = new Color(0.957f, 0.239f, 0.957f);
+    }
+    else if (ren >= 3) {
         c = new Color(0.957f, 0.957f, 0.239f);
     }
     else {
@@ -440,6 +443,8 @@ void calcScore(int basicScore) {
             numH1_3.SetActive(true); numH2_3.SetActive(true); numH3_3.SetActive(false); numH4_3.SetActive(true);
             numW1_3.SetActive(true); numW2_3.SetActive(true); numW3_3.SetActive(true); break;
     }
+    tSpin = 1;
+
 
 }
 
@@ -492,6 +497,7 @@ void restart() {
     ren = 0;
     tSpin = 1;
     hardDropScore = 0;
+    cheat = 0;
 
     ojmGenCnt = 0;
 
@@ -514,6 +520,7 @@ void init() {
 
     changeBlkShp();
     putBlk();
+    cheat = 0;
     calcScore(0);
 
 
@@ -907,11 +914,15 @@ void delLine() {
         if (checkLine(y)) {
             // Debug.Log("delLine : " + y);
             combo++;
-            for (int yy = y; yy >= D.BLOCK_CELL_LEN; yy--) {
-
+            for (int yy = y; yy >= D.BLOCK_CELL_LEN - 1; yy--) {
                 for (int x = D.BLOCK_CELL_LEN - 1 ; x < D.MAIN_FIELD_CELL_W - D.BLOCK_CELL_LEN + 1; x++) {
                     mainFldAry[yy, x] = mainFldAry[yy - 1, x];
                     mainFldGui[yy, x].colorF(mainFldGui[yy - 1, x].getColorId());
+
+                    if (yy == D.BLOCK_CELL_LEN - 1) {
+                        mainFldAry[D.BLOCK_CELL_LEN - 1, x] = D.ST.NON;
+                        mainFldGui[D.BLOCK_CELL_LEN - 1, x].color(D.ST.NON);
+                    }
                 }
             }
             y++;
@@ -1065,9 +1076,9 @@ bool rotBlk(bool right = true) {
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 3;}
-                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 2;
-                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                        blkShp = blk.shp.A; rotSt = D.ROT_ST.A; success = false;}
                     break;
                 case D.ROT_ST.B:
                     blkShp = blk.shp.C; rotSt = D.ROT_ST.C;
@@ -1083,9 +1094,9 @@ bool rotBlk(bool right = true) {
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY - 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 3;}
-                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 2;
-                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                        blkShp = blk.shp.C; rotSt = D.ROT_ST.C; success = false;}
                     break;
                 case D.ROT_ST.D:
                     blkShp = blk.shp.A; rotSt = D.ROT_ST.A;
@@ -1114,9 +1125,9 @@ bool rotBlk(bool right = true) {
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 3;}
-                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 0;}
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 2;
-                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                        blkShp = blk.shp.B; rotSt = D.ROT_ST.B; success = false;}
                     break;
                 case D.ROT_ST.C:
                     blkShp = blk.shp.B; rotSt = D.ROT_ST.B;
@@ -1132,9 +1143,9 @@ bool rotBlk(bool right = true) {
                     if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY + 0;}
                     if (!ablePutBlk()) {blkX = blkX + 0; blkY = blkY + 1;}
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY - 3;}
-                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                    if (!ablePutBlk()) {blkX = blkX - 1; blkY = blkY - 0;} 
                     if (!ablePutBlk()) {blkX = blkX + 1; blkY = blkY + 2;
-                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;} //else if (blkIndex == D.ST.TTT) {tSpin = 3;}
+                        blkShp = blk.shp.D; rotSt = D.ROT_ST.D; success = false;}
                     break;
             }
             ///
@@ -1161,6 +1172,43 @@ static D.ST[] shuffleAry(D.ST[] ary) {
     return tmp;
 }
 
+void checkTspin() {
+
+    if (blkIndex != D.ST.TTT) {
+        tSpin = 1;
+        return;
+    }
+
+
+    if (rotSt == D.ROT_ST.C) {
+        if (mainFldAry[blkY, blkX + 2] == D.ST.FIX) {
+            if (mainFldAry[blkY + 2, blkX + 2] == D.ST.FIX) {
+                if (mainFldAry[blkY + 2, blkX] == D.ST.FIX) {
+                    tSpin = 2;
+                    // Debug.Log(tSpin);
+                    return;
+                }
+            }
+        }
+    }
+    else if (rotSt == D.ROT_ST.B || rotSt == D.ROT_ST.D) {
+        if (mainFldAry[blkY + 2, blkX + 2] == D.ST.FIX) {
+            if (mainFldAry[blkY + 2, blkX] == D.ST.FIX) {
+                if (mainFldAry[blkY, blkX + 2] == D.ST.FIX) {
+                    if (mainFldAry[blkY, blkX] == D.ST.FIX) {
+                        tSpin = 3;
+                        // Debug.Log(tSpin);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    tSpin = 1;
+    return;
+
+}
 
 
 // Update is called once per frame
@@ -1235,8 +1283,8 @@ void Update()
             scoreUpCnt++;
             if (scoreUpCnt >= 5) {
                 scoreUpCnt = 0;
-                score += 200;
-                calcScore(0);
+                cheat += 1000;
+                // calcScore(0);
             }
         }
 
@@ -1254,6 +1302,8 @@ void Update()
             if (x0 < Screen.width * 0.5) right = false;
         
             if (rotBlk(right)) {
+
+                checkTspin();
 
                 actCnt++;
                 if (actCnt >= 15) speedFix = true;
