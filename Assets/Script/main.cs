@@ -477,6 +477,17 @@ void restart() {
     holdEn = true;
 
     changeBlkShp();
+
+
+    if (blkIndex == D.ST.III) {
+        blkY--;
+        blkX--;
+    }
+    else if (blkIndex == D.ST.OOO) {
+        blkX--;
+    }
+    maxY = blkY;
+
     putBlk();
 
 
@@ -519,6 +530,13 @@ void init() {
     holdEn = true;
 
     changeBlkShp();
+    if (blkIndex == D.ST.III) {
+        blkY--;
+        blkX--;
+    }
+    else if (blkIndex == D.ST.OOO) {
+        blkX--;
+    }
     putBlk();
     cheat = 0;
     calcScore(0);
@@ -563,7 +581,16 @@ void holdBlk() {
 
         blkX = D.INIT_POS_X;
         blkY = D.INIT_POS_Y;
+
+        if (blkIndex == D.ST.III) {
+            blkY--;
+            blkX--;
+        }
+        else if (blkIndex == D.ST.OOO) {
+            blkX--;
+        }
         maxY = blkY;
+
 
         if (ablePutBlk()) {
             putBlk();
@@ -616,6 +643,13 @@ void holdBlk() {
 
         blkX = D.INIT_POS_X;
         blkY = D.INIT_POS_Y;
+        if (blkIndex == D.ST.III) {
+            blkY--;
+            blkX--;
+        }
+        else if (blkIndex == D.ST.OOO) {
+            blkX--;
+        }
         maxY = blkY;
 
 
@@ -777,9 +811,6 @@ void rstBlk() {
 
     holdEn = true;
 
-    blkX = D.INIT_POS_X;
-    blkY = D.INIT_POS_Y;
-    maxY = blkY;
 
     fixTimerSetDone = false;
     CancelInvoke();
@@ -787,6 +818,21 @@ void rstBlk() {
     speedFix = false;
 
     changeBlkShp();
+
+
+    blkX = D.INIT_POS_X;
+    blkY = D.INIT_POS_Y;
+
+    if (blkIndex == D.ST.III) {
+        blkY--;
+        blkX--;
+    }
+    else if (blkIndex == D.ST.OOO) {
+        blkX--;
+    }
+
+    maxY = blkY;
+
 
     if (ablePutBlk()) {
         putBlk();
